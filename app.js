@@ -1,6 +1,5 @@
 /* =========================
-  🔧ここを変更：あなたのWorker URL
-  例）https://keigolint-api.your-subdomain.workers.dev
+https://honorificchecker.gmo-k-watanabe.workers.dev/
 ========================= */
 const API_ENDPOINT = 'https://your-worker-name.your-subdomain.workers.dev';
 
@@ -349,4 +348,5 @@ function toast(msg){
   el.textContent = msg;
   el.style.opacity = "1";
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
+
 }
