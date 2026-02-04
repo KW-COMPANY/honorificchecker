@@ -38,7 +38,10 @@ tabBulk.addEventListener("click", ()=>setTab("bulk"));
 
 /* ========= Modal ========= */
 const helpModal = $("helpModal");
-$("btnHelp").addEventListener("click", ()=>openModal());
+const helpBtn = $("btnHelp");
+if (helpBtn) {
+  helpBtn.addEventListener("click", ()=>openModal());
+}
 helpModal.addEventListener("click", (e)=>{
   const close = e.target?.dataset?.close;
   if(close) closeModal();
@@ -347,4 +350,5 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
