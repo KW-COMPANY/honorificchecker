@@ -229,8 +229,12 @@ function renderShortResult(data){
       <div class="mt-3 text-sm leading-7">
         <div class="font-semibold">修正案</div>
         <ul class="list-disc pl-5">
-          ${(data.suggestions || []).slice(0,5)
-            .map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
+          ${data.suggestions?.length
+  ? `<ul class="list-disc pl-5">
+      ${data.suggestions.slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
+     </ul>`
+  : `<div class="muted text-sm">修正提案はありません。</div>`
+}
         </ul>
       </div>
 
