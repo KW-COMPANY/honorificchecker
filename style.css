@@ -21,7 +21,7 @@
 
 .bg-hero{
   background:
-    radial-gradient(1100px 500px at 18% 0%, rgba(124,58,237,.35), transparent 60%),
+    radial-gradient(1100px 500px at 18% 0%, rgba(139,92,246,.28), transparent 60%),
     radial-gradient(900px 600px at 75% 15%, rgba(167,139,250,.22), transparent 55%),
     radial-gradient(800px 600px at 50% 100%, rgba(52,211,153,.10), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2));
@@ -30,7 +30,7 @@
 
 .card{
   border: 1px solid var(--border);
-  background: var(--card);
+   var(--card);
   border-radius: 16px;
   padding: 18px;
   box-shadow: var(--shadow);
@@ -209,6 +209,7 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
 
 
