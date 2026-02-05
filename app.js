@@ -1,4 +1,4 @@
-const API_ENDPOINT = 'https://honorificchecker.gmo-k-watanabe.workers.dev/api/check';
+const API_ENDPOINT = 'https://honorificchecker.gmo-k-watanabe.workers.dev/';
 
 const $ = (id) => document.getElementById(id);
 
@@ -414,4 +414,5 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
