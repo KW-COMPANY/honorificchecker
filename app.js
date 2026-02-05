@@ -167,6 +167,11 @@ function renderShortResult(data){
     return;
   }
 
+  // 問題なしケース
+  if(
+    (data.label === "敬語" || data.label === "謙譲語") &&
+    (!data.suggestions || data.suggestions.length === 0)
+  ){
     box.innerHTML = `
       <div class="result-card">
         <div class="result-title text-emerald-300">
@@ -230,79 +235,6 @@ function renderShortResult(data){
         <ul class="list-disc pl-5">
           ${(data.common_mistakes || []).slice(0,5)
             .map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-        </ul>
-      </div>
-    </div>
-  `;
-}
-
-if(
-  (data.label === "敬語" || data.label === "謙譲語") &&
-  (!data.suggestions || data.suggestions.length === 0)
-){
-  box.innerHTML = `
-    <div class="result-card">
-      <div class="result-title text-emerald-300">
-        <i class="fa-solid fa-circle-check mr-2"></i>
-        問題は見つかりませんでした
-      </div>
-      <div class="mt-2 text-sm text-slate-200/90">
-        この文章はビジネス敬語として自然です。
-      </div>
-    </div>
-  `;
-  return;
-}
-  box.innerHTML = `
-    <div class="result-card">
-      <div class="result-title text-emerald-300">
-        <i class="fa-solid fa-circle-check mr-2"></i>
-        問題は見つかりませんでした
-      </div>
-      <div class="mt-2 text-sm text-slate-200/90">
-        この文章はビジネス敬語として自然です。
-      </div>
-    </div>
-  `;
-  return;
-}
-  const suggestion = (data.suggestions && data.suggestions[0]) ? data.suggestions[0] : (data.suggestion || "");
-  $("btnCopyShortSuggestion").disabled = !suggestion;
-  $("btnCopyShortSuggestion").onclick = (e)=>
-  copyToClipboard(suggestion, "修正文をコピーしました", e.currentTarget);
-
-  box.innerHTML = `
-    <div class="result-card">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="result-title">
-          判定：<span class="px-2 py-1 rounded-lg border border-white/10 bg-white/5">${escapeHtml(data.label || "—")}</span>
-        </div>
-        <div class="text-xs text-slate-200/70">信頼度：${escapeHtml(String(data.confidence ?? "—"))}</div>
-      </div>
-
-      <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">理由</div>
-        <div class="text-slate-200/90">${escapeHtml(data.reason || "—")}</div>
-      </div>
-
-      <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">修正案</div>
-        <ul class="list-disc pl-5">
-          ${(data.suggestions || []).slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-        </ul>
-      </div>
-
-      <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">活用事例</div>
-        <ul class="list-disc pl-5">
-          ${(data.examples || []).slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-        </ul>
-      </div>
-
-      <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">よくある間違い</div>
-        <ul class="list-disc pl-5">
-          ${(data.common_mistakes || []).slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
         </ul>
       </div>
     </div>
@@ -467,6 +399,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
