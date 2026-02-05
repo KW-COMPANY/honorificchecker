@@ -38,7 +38,6 @@ tabBulk.addEventListener("click", ()=>setTab("bulk"));
 
 /* ========= Modal ========= */
 const helpModal = $("helpModal");
-const helpBtn = $("btnHelp");
 if (helpBtn) {
   helpBtn.addEventListener("click", ()=>openModal());
 }
@@ -399,6 +398,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
