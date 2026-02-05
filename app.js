@@ -96,7 +96,7 @@ const RULES = [
   { re: /ご覧になられる/g, type:"keigo", msg:"「ご覧になる」＋「られる」で二重敬語の可能性", sug:"ご覧になる / ご覧いただく" },
   { re: /お伺いさせていただく/g, type:"keigo", msg:"過剰敬語になりやすい表現", sug:"伺います / お伺いします" },
   { re: /ご確認のほどよろしくお願いいたします。?/g, type:"grammar", msg:"定型としてOKですが、連続使用はくどくなりやすい", sug:"ご確認ください / ご査収ください（場面注意）" },
-  { re: /〜になります。/g, type:"grammar", msg:"「〜です」で足りる場面が多い（過剰丁寧）", sug:"〜です" },
+  { re: /になります。/g, type:"grammar", msg:"「〜です」で足りる場面が多い（過剰丁寧）", sug:"〜です" },
   { re: /させていただきます/g, type:"grammar", msg:"多用すると回りくどい印象", sug:"します / いたします（場面により）" }
 ];
 
@@ -411,3 +411,4 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
