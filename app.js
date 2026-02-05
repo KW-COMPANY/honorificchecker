@@ -163,6 +163,10 @@ function renderShortResult(data){
     return;
   }
 if(
+  (data.label === "敬語" || data.label === "謙譲語") &&
+  (!data.suggestions || data.suggestions.length === 0)
+){
+  if(
   data.label === "敬語" &&
   (!data.suggestions || data.suggestions.length === 0)
 ){
@@ -380,6 +384,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
