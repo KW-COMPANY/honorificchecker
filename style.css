@@ -6,8 +6,8 @@
   --text: rgba(255,255,255,.92);
   --muted: rgba(255,255,255,.70);
 
-  --violet:#a78bfa;
-  --violet2:#7c3aed;
+  --violet:#c4b5fd;
+  --violet2:#8b5cf6;
   --emerald:#34d399;
 
   --typo:#facc15;
@@ -207,4 +207,5 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
