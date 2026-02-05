@@ -162,7 +162,23 @@ function renderShortResult(data){
     </div>`;
     return;
   }
-
+if(
+  data.label === "敬語" &&
+  (!data.suggestions || data.suggestions.length === 0)
+){
+  box.innerHTML = `
+    <div class="result-card">
+      <div class="result-title text-emerald-300">
+        <i class="fa-solid fa-circle-check mr-2"></i>
+        問題は見つかりませんでした
+      </div>
+      <div class="mt-2 text-sm text-slate-200/90">
+        この文章はビジネス敬語として自然です。
+      </div>
+    </div>
+  `;
+  return;
+}
   const suggestion = (data.suggestions && data.suggestions[0]) ? data.suggestions[0] : (data.suggestion || "");
   $("btnCopyShortSuggestion").disabled = !suggestion;
   $("btnCopyShortSuggestion").onclick = (e)=>
@@ -364,6 +380,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
