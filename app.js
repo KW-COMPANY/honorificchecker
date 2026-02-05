@@ -398,14 +398,3 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
-
-
-
-
-
-
-
-
-
-
-
