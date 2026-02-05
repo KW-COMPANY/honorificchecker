@@ -227,16 +227,15 @@ function renderShortResult(data){
       </div>
 
       <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">修正案</div>
-        <ul class="list-disc pl-5">
-          ${data.suggestions?.length
-  ? `<ul class="list-disc pl-5">
-      ${data.suggestions.slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-     </ul>`
-  : `<div class="muted text-sm">修正提案はありません。</div>`
-}
-        </ul>
-      </div>
+  <div class="font-semibold">修正案</div>
+  ${
+    data.suggestions?.length
+      ? `<ul class="list-disc pl-5">
+          ${data.suggestions.slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
+         </ul>`
+      : `<div class="muted text-sm">修正提案はありません。</div>`
+  }
+</div>
 
       <div class="mt-3 text-sm leading-7">
         <div class="font-semibold">活用事例</div>
@@ -415,4 +414,3 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
-
