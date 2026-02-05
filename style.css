@@ -140,12 +140,15 @@
   from{ opacity:0; transform: translateY(6px); }
   to{ opacity:1; transform: translateY(0); }
 }
+
+.result-card{
   margin-top: 14px;
   border: 1px solid var(--border);
   background: rgba(2,6,23,.35);
   border-radius: 14px;
   padding: 14px;
 }
+
 .result-title{
   font-weight: 800;
   color: var(--text);
@@ -219,4 +222,5 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
