@@ -37,13 +37,29 @@ tabShort.addEventListener("click", ()=>setTab("short"));
 tabBulk.addEventListener("click", ()=>setTab("bulk"));
 
 /* ========= Modal ========= */
+/* ========= Modal ========= */
 
-helpModal.addEventListener("click", (e)=>{
-  const close = e.target?.dataset?.close;
-  if(close) closeModal();
-});
-function openModal(){ helpModal.classList.remove("hidden"); }
-function closeModal(){ helpModal.classList.add("hidden"); }
+const helpModal = $("helpModal");
+const helpBtn = $("helpBtn"); // ← これも追加
+
+if (helpBtn) {
+  helpBtn.addEventListener("click", ()=>openModal());
+}
+
+if (helpModal) {
+  helpModal.addEventListener("click", (e)=>{
+    const close = e.target?.dataset?.close;
+    if(close) closeModal();
+  });
+}
+
+function openModal(){
+  helpModal?.classList.remove("hidden");
+}
+
+function closeModal(){
+  helpModal?.classList.add("hidden");
+}
 
 /* ========= Examples ========= */
 document.body.addEventListener("click", (e)=>{
