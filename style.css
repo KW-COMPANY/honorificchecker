@@ -74,9 +74,8 @@
 .btn-primary{
   font-weight: 800;
   font-size: 1rem;
-}
-
   background: linear-gradient(135deg, #8b5cf6, #c4b5fd);
+  border-color: rgba(167,139,250,.4);
 }
 
 .btn-primary:hover{
@@ -220,3 +219,4 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
