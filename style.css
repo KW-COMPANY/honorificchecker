@@ -72,7 +72,9 @@
 .btn[disabled]{ opacity:.45; cursor:not-allowed; }
 
 .btn-primary{
-  background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(167,139,250,.9));
+  background: linear-gradient(135deg, rgba(139,92,246,.95), rgba(196,181,253,.95));
+  border-color: rgba(196,181,253,.45);
+}
   border-color: rgba(167,139,250,.35);
 }
 .btn-primary:hover{ background: linear-gradient(135deg, rgba(124,58,237,1), rgba(167,139,250,1)); }
@@ -207,5 +209,6 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
 
