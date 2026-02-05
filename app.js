@@ -165,7 +165,8 @@ function renderShortResult(data){
 
   const suggestion = (data.suggestions && data.suggestions[0]) ? data.suggestions[0] : (data.suggestion || "");
   $("btnCopyShortSuggestion").disabled = !suggestion;
-  $("btnCopyShortSuggestion").onclick = ()=>copyToClipboard(suggestion, "修正文をコピーしました");
+  $("btnCopyShortSuggestion").onclick = (e)=>
+  copyToClipboard(suggestion, "修正文をコピーしました", e.currentTarget);
 
   box.innerHTML = `
     <div class="result-card">
@@ -243,7 +244,8 @@ function renderBulkResult(originalText, data){
   $("bulkCorrected").textContent = corrected;
 
   $("btnCopyBulkCorrected").disabled = !corrected;
-  $("btnCopyBulkCorrected").onclick = ()=>copyToClipboard(corrected, "修正版をコピーしました");
+  $("btnCopyBulkCorrected").onclick = (e)=>
+  copyToClipboard(corrected, "修正版をコピーしました", e.currentTarget);
 }
 
 function renderIssue(it){
@@ -362,6 +364,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
