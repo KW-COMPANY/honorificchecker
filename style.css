@@ -72,6 +72,10 @@
 .btn[disabled]{ opacity:.45; cursor:not-allowed; }
 
 .btn-primary{
+  font-weight: 800;
+  font-size: 1rem;
+}
+
   background: linear-gradient(135deg, #8b5cf6, #c4b5fd);
 }
 
@@ -216,6 +220,7 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
 
 
