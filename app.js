@@ -173,7 +173,7 @@ function renderShortResult(data){
       </div>
       <div class="mt-2 text-sm text-slate-200/90">${escapeHtml(data.error)}</div>
       <div class="mt-2 text-xs text-slate-200/70">
-        API_ENDPOINT（app.js）とWorkersの環境変数を確認してください。
+        サーバーと通信できませんでした。時間をおいて再度お試しください。
       </div>
     </div>`;
     return;
@@ -415,3 +415,4 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
