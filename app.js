@@ -315,10 +315,22 @@ function escapeHtml(str){
 }
 function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-async function copyToClipboard(text, okMsg){
+async function copyToClipboard(text, okMsg, btn){
   try{
     await navigator.clipboard.writeText(text);
     toast(okMsg || "コピーしました");
+
+    if(btn){
+      const original = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-check mr-2"></i>コピー完了`;
+      btn.disabled = true;
+
+      setTimeout(()=>{
+        btn.innerHTML = original;
+        btn.disabled = false;
+      }, 1800);
+    }
+
   }catch{
     toast("コピーできませんでした（ブラウザ権限を確認してください）");
   }
@@ -350,5 +362,6 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
