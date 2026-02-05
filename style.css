@@ -29,10 +29,11 @@
 }
 
 .card{
-  .card{
   border: 1px solid var(--border);
   background: var(--card);
   border-radius: 16px;
+  padding: 18px;
+  box-shadow: var(--shadow);
 }
 
 .card-title{
@@ -210,6 +211,7 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
 
 
