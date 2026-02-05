@@ -72,7 +72,7 @@
 .btn[disabled]{ opacity:.45; cursor:not-allowed; }
 
 .btn-primary{
-  background: linear-gradient(135deg, #a78bfa, #ddd6fe);
+  background: linear-gradient(135deg, #8b5cf6, #c4b5fd);
 }
 
 .btn-primary:hover{
@@ -209,6 +209,7 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
 
 
 
