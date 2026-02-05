@@ -167,11 +167,6 @@ function renderShortResult(data){
     return;
   }
 
-  // 問題なしケース
-  if(
-    (data.label === "敬語" || data.label === "謙譲語") &&
-    (!data.suggestions || data.suggestions.length === 0)
-  ){
     box.innerHTML = `
       <div class="result-card">
         <div class="result-title text-emerald-300">
@@ -472,6 +467,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
