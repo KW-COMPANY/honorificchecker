@@ -260,3 +260,34 @@ function renderBulkResult(data){
   $("bulkCorrected").textContent = data.corrected || "";
 
 }
+
+function renderBulkSummary(data){
+  const box = $("bulkSummary");
+  box.innerHTML = "";
+
+  const count = (data.issues || []).length;
+
+  let html = "";
+
+  if(count <= 1){
+    html = `
+      <div class="summary summary-good">
+        ✅ ほぼ問題はありません
+      </div>
+    `;
+  } else if(count <= 3){
+    html = `
+      <div class="summary summary-warning">
+        ⚠ 軽微な修正をおすすめします
+      </div>
+    `;
+  } else {
+    html = `
+      <div class="summary summary-bad">
+        ❌ 修正が多く必要です
+      </div>
+    `;
+  }
+
+  box.innerHTML = html;
+}
