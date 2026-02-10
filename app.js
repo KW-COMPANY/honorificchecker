@@ -207,6 +207,20 @@ function renderShortResult(data){
   $("btnCopyShortSuggestion").onclick = (e)=>
     copyToClipboard(suggestion, "修正文をコピーしました", e.currentTarget);
 
+  box.innerHTML = `
+    <div class="result-card">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="result-title">
+          判定：
+          <span class="px-2 py-1 rounded-lg border border-white/10 bg-white/5">
+            ${escapeHtml(data.label || "—")}
+          </span>
+        </div>
+        <div class="text-xs text-slate-200/70">
+          信頼度：${escapeHtml(String(data.confidence ?? "—"))}
+        </div>
+      </div>
+
       <div class="mt-3 text-sm leading-7">
         <div class="font-semibold">理由</div>
         <div class="text-slate-200/90">${escapeHtml(data.reason || "—")}</div>
@@ -400,6 +414,7 @@ function toast(msg){
   toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
 
 }
+
 
 
 
