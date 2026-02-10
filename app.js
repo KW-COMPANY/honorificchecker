@@ -131,57 +131,62 @@ function renderShortResult(data){
 
   if(data.error){
     box.innerHTML = `<div class="result-card">
-      <div class="result-title text-rose-200">
+      <div class="result-title text-rose-300 text-lg font-bold">
         エラー
       </div>
-      <div class="mt-2 text-sm text-slate-200/90">${escapeHtml(data.error)}</div>
+      <div class="mt-2 text-sm">${escapeHtml(data.error)}</div>
     </div>`;
     return;
   }
 
-  // 問題なしケース
-  if(
-    (data.label === "敬語" || data.label === "謙譲語") &&
-    (!data.suggestions || data.suggestions.length === 0)
-  ){
-    box.innerHTML = `
-      <div class="result-card">
-        <div class="result-title text-emerald-300">
-          問題は見つかりませんでした
-        </div>
-        <div class="mt-2 text-sm text-slate-200/90">
-          この文章はビジネス敬語として自然です。
-        </div>
+  const suggestions = data.suggestions || [];
+  let summaryHtml = "";
+
+  // ▼ 総合評価判定
+  if(suggestions.length === 0){
+    summaryHtml = `
+      <div class="summary summary-good">
+        ✅ ほぼ問題はありません
       </div>
     `;
-    return;
+  } else if(suggestions.length <= 2){
+    summaryHtml = `
+      <div class="summary summary-warning">
+        ⚠ 軽微な修正をおすすめします
+      </div>
+    `;
+  } else {
+    summaryHtml = `
+      <div class="summary summary-bad">
+        ❌ 修正が多く必要です
+      </div>
+    `;
   }
 
-  // 修正提案ありケース（★判定・信頼度は削除済み）
-  const suggestion = (data.suggestions && data.suggestions[0])
-    ? data.suggestions[0]
-    : (data.suggestion || "");
+  const suggestion = suggestions[0] || "";
 
   $("btnCopyShortSuggestion").disabled = !suggestion;
   $("btnCopyShortSuggestion").onclick = (e)=>
     copyToClipboard(suggestion, "修正文をコピーしました", e.currentTarget);
 
   box.innerHTML = `
-    <div class="result-card">
+    ${summaryHtml}
 
-      <div class="mt-3 text-sm leading-7">
+    <div class="result-card mt-4">
+
+      <div class="text-sm leading-7">
         <div class="font-semibold">理由</div>
-        <div class="text-slate-200/90">${escapeHtml(data.reason || "—")}</div>
+        <div>${escapeHtml(data.reason || "—")}</div>
       </div>
 
       <div class="mt-3 text-sm leading-7">
         <div class="font-semibold">修正案</div>
         ${
-          data.suggestions?.length
+          suggestions.length
             ? `<ul class="list-disc pl-5">
-                ${data.suggestions.slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
+                ${suggestions.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
                </ul>`
-            : `<div class="muted text-sm">修正提案はありません。</div>`
+            : `<div class="muted">修正提案はありません。</div>`
         }
       </div>
 
@@ -213,3 +218,4 @@ function toast(msg){
   clearTimeout(toastTimer);
   alert(msg);
 }
+
