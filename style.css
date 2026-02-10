@@ -222,3 +222,33 @@
   .modal-card{ margin: 4vh 12px; }
 
 }
+
+/* ===== 総合評価バナー ===== */
+
+.summary{
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 12px;
+  animation: fadeIn .3s ease;
+}
+
+.summary-good{
+  background: rgba(52,211,153,.15);
+  border: 1px solid rgba(52,211,153,.4);
+  color: #34d399;
+}
+
+.summary-warning{
+  background: rgba(250,204,21,.15);
+  border: 1px solid rgba(250,204,21,.4);
+  color: #facc15;
+}
+
+.summary-bad{
+  background: rgba(251,113,133,.15);
+  border: 1px solid rgba(251,113,133,.4);
+  color: #fb7185;
+}
