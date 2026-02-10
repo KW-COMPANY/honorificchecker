@@ -219,4 +219,23 @@ function toast(msg){
   alert(msg);
 }
 
+/* ========= Bulk check ========= */
+$("btnCheckBulk").addEventListener("click", async ()=>{
+  const text = $("bulkInput").value.trim();
+  if(!text){ return toast("メール本文を入力してください"); }
 
+  $("btnCheckBulk").disabled = true;
+  $("btnCheckBulk").innerHTML = "チェック中...";
+
+  try{
+    const data = await postJson("/api/bulk", { text });
+
+    renderBulkResult(data);
+
+  }catch(err){
+    toast(err.message || "エラーが発生しました");
+  }finally{
+    $("btnCheckBulk").disabled = false;
+    $("btnCheckBulk").innerHTML = "一括チェックする";
+  }
+});
