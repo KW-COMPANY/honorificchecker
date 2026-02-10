@@ -37,10 +37,8 @@ tabShort.addEventListener("click", ()=>setTab("short"));
 tabBulk.addEventListener("click", ()=>setTab("bulk"));
 
 /* ========= Modal ========= */
-/* ========= Modal ========= */
-
 const helpModal = $("helpModal");
-const helpBtn = $("helpBtn"); // ← これも追加
+const helpBtn = $("helpBtn");
 
 if (helpBtn) {
   helpBtn.addEventListener("click", ()=>openModal());
@@ -91,40 +89,6 @@ $("btnClearBulk").addEventListener("click", ()=>{
   $("btnCopyBulkCorrected").disabled = true;
 });
 
-/* ========= Rule-based quick hints (LLMの補助) ========= */
-const RULES = [
-  { re: /ご覧になられる/g, type:"keigo", msg:"「ご覧になる」＋「られる」で二重敬語の可能性", sug:"ご覧になる / ご覧いただく" },
-  { re: /お伺いさせていただく/g, type:"keigo", msg:"過剰敬語になりやすい表現", sug:"伺います / お伺いします" },
-  { re: /ご確認のほどよろしくお願いいたします。?/g, type:"grammar", msg:"定型としてOKですが、連続使用はくどくなりやすい", sug:"ご確認ください / ご査収ください（場面注意）" },
-  { re: /になります。/g, type:"grammar", msg:"「〜です」で足りる場面が多い（過剰丁寧）", sug:"〜です" },
-  { re: /させていただきます/g, type:"grammar", msg:"多用すると回りくどい印象", sug:"します / いたします（場面により）" }
-];
-
-function ruleHints(text){
-  const hits = [];
-  for(const r of RULES){
-    const m = text.match(r.re);
-    if(m) hits.push({ ...r, count: m.length });
-  }
-  return hits;
-}
-
-function renderRuleHints(el, hits){
-  if(!hits.length){
-    el.classList.add("hidden");
-    el.innerHTML = "";
-    return;
-  }
-  el.classList.remove("hidden");
-  el.className = "hint";
-  el.innerHTML = `
-    <div class="font-bold text-slate-100 mb-1"><i class="fa-solid fa-bolt mr-2 text-amber-300"></i>簡易ルール検出（参考）</div>
-    <ul class="list-disc pl-5 space-y-1">
-      ${hits.map(h=>`<li><span class="font-semibold">${escapeHtml(h.msg)}</span>（${h.count}箇所）<div class="muted">提案：${escapeHtml(h.sug)}</div></li>`).join("")}
-    </ul>
-  `;
-}
-
 /* ========= API ========= */
 async function postJson(path, body){
   const res = await fetch(`${API_ENDPOINT}${path}`, {
@@ -144,12 +108,11 @@ $("btnCheckShort").addEventListener("click", async ()=>{
   const text = $("shortInput").value.trim();
   if(!text){ return toast("文を入力してください"); }
 
-  renderRuleHints($("shortRuleHints"), ruleHints(text));
   $("shortResult").classList.add("hidden");
   $("btnCopyShortSuggestion").disabled = true;
 
   $("btnCheckShort").disabled = true;
-  $("btnCheckShort").innerHTML = `<i class="fa-solid fa-spinner mr-2 fa-spin"></i>チェック中...`;
+  $("btnCheckShort").innerHTML = `チェック中...`;
 
   try{
     const data = await postJson("/api/check", { text });
@@ -158,7 +121,7 @@ $("btnCheckShort").addEventListener("click", async ()=>{
     renderShortResult({ error: err.message || String(err) });
   }finally{
     $("btnCheckShort").disabled = false;
-    $("btnCheckShort").innerHTML = `<i class="fa-solid fa-magnifying-glass mr-2"></i>チェックする`;
+    $("btnCheckShort").innerHTML = `チェックする`;
   }
 });
 
@@ -169,12 +132,9 @@ function renderShortResult(data){
   if(data.error){
     box.innerHTML = `<div class="result-card">
       <div class="result-title text-rose-200">
-        <i class="fa-solid fa-triangle-exclamation mr-2"></i>エラー
+        エラー
       </div>
       <div class="mt-2 text-sm text-slate-200/90">${escapeHtml(data.error)}</div>
-      <div class="mt-2 text-xs text-slate-200/70">
-        サーバーと通信できませんでした。時間をおいて再度お試しください。
-      </div>
     </div>`;
     return;
   }
@@ -187,7 +147,6 @@ function renderShortResult(data){
     box.innerHTML = `
       <div class="result-card">
         <div class="result-title text-emerald-300">
-          <i class="fa-solid fa-circle-check mr-2"></i>
           問題は見つかりませんでした
         </div>
         <div class="mt-2 text-sm text-slate-200/90">
@@ -198,7 +157,7 @@ function renderShortResult(data){
     return;
   }
 
-  // 修正提案ありケース
+  // 修正提案ありケース（★判定・信頼度は削除済み）
   const suggestion = (data.suggestions && data.suggestions[0])
     ? data.suggestions[0]
     : (data.suggestion || "");
@@ -209,17 +168,6 @@ function renderShortResult(data){
 
   box.innerHTML = `
     <div class="result-card">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="result-title">
-          判定：
-          <span class="px-2 py-1 rounded-lg border border-white/10 bg-white/5">
-            ${escapeHtml(data.label || "—")}
-          </span>
-        </div>
-        <div class="text-xs text-slate-200/70">
-          信頼度：${escapeHtml(String(data.confidence ?? "—"))}
-        </div>
-      </div>
 
       <div class="mt-3 text-sm leading-7">
         <div class="font-semibold">理由</div>
@@ -227,133 +175,18 @@ function renderShortResult(data){
       </div>
 
       <div class="mt-3 text-sm leading-7">
-  <div class="font-semibold">修正案</div>
-  ${
-    data.suggestions?.length
-      ? `<ul class="list-disc pl-5">
-          ${data.suggestions.slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-         </ul>`
-      : `<div class="muted text-sm">修正提案はありません。</div>`
-  }
-</div>
-
-      <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">活用事例</div>
-        <ul class="list-disc pl-5">
-          ${(data.examples || []).slice(0,5)
-            .map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-        </ul>
+        <div class="font-semibold">修正案</div>
+        ${
+          data.suggestions?.length
+            ? `<ul class="list-disc pl-5">
+                ${data.suggestions.slice(0,5).map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
+               </ul>`
+            : `<div class="muted text-sm">修正提案はありません。</div>`
+        }
       </div>
 
-      <div class="mt-3 text-sm leading-7">
-        <div class="font-semibold">よくある間違い</div>
-        <ul class="list-disc pl-5">
-          ${(data.common_mistakes || []).slice(0,5)
-            .map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-        </ul>
-      </div>
     </div>
   `;
-}
-
-/* ========= Bulk check ========= */
-$("btnCheckBulk").addEventListener("click", async ()=>{
-  const text = $("bulkInput").value;
-  if(!text.trim()){ return toast("メール本文を貼り付けてください"); }
-
-  renderRuleHints($("bulkRuleHints"), ruleHints(text));
-  $("btnCopyBulkCorrected").disabled = true;
-
-  $("btnCheckBulk").disabled = true;
-  $("btnCheckBulk").innerHTML = `<i class="fa-solid fa-spinner mr-2 fa-spin"></i>チェック中...`;
-
-  try{
-    const data = await postJson("/api/bulk", { text });
-    renderBulkResult(text, data);
-  }catch(err){
-    renderBulkResult(text, { error: err.message || String(err) });
-  }finally{
-    $("btnCheckBulk").disabled = false;
-    $("btnCheckBulk").innerHTML = `<i class="fa-solid fa-highlighter mr-2"></i>一括チェックする`;
-  }
-});
-
-function renderBulkResult(originalText, data){
-  if(data.error){
-    $("bulkHighlighted").innerHTML = `<span class="text-rose-200"><i class="fa-solid fa-triangle-exclamation mr-2"></i>${escapeHtml(data.error)}</span>`;
-    $("bulkIssues").innerHTML = `<div class="muted text-sm">API_ENDPOINT（app.js）とWorkersの環境変数を確認してください。</div>`;
-    $("bulkCorrected").textContent = "";
-    return;
-  }
-
-  const issues = Array.isArray(data.issues) ? data.issues : [];
-  const corrected = data.corrected || "";
-
-  $("bulkHighlighted").innerHTML = buildHighlightedHtml(originalText, issues);
-  $("bulkIssues").innerHTML = issues.length ? issues.map(renderIssue).join("") : `<div class="muted text-sm">指摘は見つかりませんでした。</div>`;
-  $("bulkCorrected").textContent = corrected;
-
-  $("btnCopyBulkCorrected").disabled = !corrected;
-  $("btnCopyBulkCorrected").onclick = (e)=>
-  copyToClipboard(corrected, "修正版をコピーしました", e.currentTarget);
-}
-
-function renderIssue(it){
-  const typeLabel = ({
-    typo:"TYPO",
-    kanji:"KANJI",
-    keigo:"KEIGO",
-    grammar:"GRAMMAR"
-  })[it.type] || "ISSUE";
-
-  const badgeColor = ({
-    typo:"text-amber-200",
-    kanji:"text-orange-200",
-    keigo:"text-rose-200",
-    grammar:"text-fuchsia-200"
-  })[it.type] || "text-slate-200";
-
-  return `
-    <div class="issue">
-      <div class="flex items-center justify-between gap-2">
-        <div class="type ${badgeColor}">${escapeHtml(typeLabel)}</div>
-        <div class="text-xs text-slate-200/70">[${escapeHtml(String(it.start))}..${escapeHtml(String(it.end))}]</div>
-      </div>
-      <div class="msg">${escapeHtml(it.message || "")}</div>
-      ${it.suggestion ? `<div class="sug">提案：<code>${escapeHtml(it.suggestion)}</code></div>` : ""}
-    </div>
-  `;
-}
-
-/* ========= Highlight builder (XSS safe) ========= */
-function buildHighlightedHtml(text, issues){
-  // sort by start asc, then end desc
-  const items = [...issues].filter(x => Number.isFinite(x.start) && Number.isFinite(x.end) && x.end > x.start)
-    .sort((a,b)=> a.start - b.start || b.end - a.end);
-
-  let out = "";
-  let idx = 0;
-
-  for(const it of items){
-    const s = clamp(it.start, 0, text.length);
-    const e = clamp(it.end, 0, text.length);
-    if(e <= idx) continue; // skip overlaps already covered
-
-    out += escapeHtml(text.slice(idx, s));
-
-    const cls = ({
-      typo:"hl hl-typo",
-      kanji:"hl hl-kanji",
-      keigo:"hl hl-keigo",
-      grammar:"hl hl-grammar"
-    })[it.type] || "hl";
-
-    const title = `${it.type || "issue"}: ${it.message || ""}`.slice(0, 300);
-    out += `<span class="${cls}" title="${escapeHtml(title)}">${escapeHtml(text.slice(s, e))}</span>`;
-    idx = e;
-  }
-  out += escapeHtml(text.slice(idx));
-  return out;
 }
 
 /* ========= Utils ========= */
@@ -365,57 +198,18 @@ function escapeHtml(str){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
 async function copyToClipboard(text, okMsg, btn){
   try{
     await navigator.clipboard.writeText(text);
     toast(okMsg || "コピーしました");
-
-    if(btn){
-      const original = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-check mr-2"></i>コピー完了`;
-      btn.disabled = true;
-
-      setTimeout(()=>{
-        btn.innerHTML = original;
-        btn.disabled = false;
-      }, 1800);
-    }
-
   }catch{
-    toast("コピーできませんでした（ブラウザ権限を確認してください）");
+    toast("コピーできませんでした");
   }
 }
 
 let toastTimer;
 function toast(msg){
   clearTimeout(toastTimer);
-  let el = $("toast");
-  if(!el){
-    el = document.createElement("div");
-    el.id = "toast";
-    el.style.position = "fixed";
-    el.style.left = "50%";
-    el.style.bottom = "18px";
-    el.style.transform = "translateX(-50%)";
-    el.style.padding = "10px 14px";
-    el.style.borderRadius = "999px";
-    el.style.border = "1px solid rgba(255,255,255,.14)";
-    el.style.background = "rgba(15,23,42,.95)";
-    el.style.color = "rgba(255,255,255,.92)";
-    el.style.boxShadow = "0 14px 40px rgba(0,0,0,.35)";
-    el.style.fontSize = "13px";
-    el.style.zIndex = "60";
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.style.opacity = "1";
-  toastTimer = setTimeout(()=>{ el.style.opacity = "0"; }, 2600);
-
+  alert(msg);
 }
-
-
-
-
-
