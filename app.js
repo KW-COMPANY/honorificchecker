@@ -239,3 +239,24 @@ $("btnCheckBulk").addEventListener("click", async ()=>{
     $("btnCheckBulk").innerHTML = "一括チェックする";
   }
 });
+
+function renderBulkResult(data){
+
+  const issues = data.issues || [];
+
+  // ▼ 総合評価表示
+  renderBulkSummary(data);
+
+  // ▼ 指摘一覧表示
+  $("bulkIssues").innerHTML = issues.map(issue => `
+    <div class="issue">
+      <div class="type">${issue.type}</div>
+      <div class="msg">${escapeHtml(issue.message)}</div>
+      <div class="sug">${escapeHtml(issue.suggestion || "")}</div>
+    </div>
+  `).join("");
+
+  // ▼ 修正版全文
+  $("bulkCorrected").textContent = data.corrected || "";
+
+}
