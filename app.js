@@ -142,26 +142,26 @@ function renderShortResult(data){
   const suggestions = data.suggestions || [];
   let summaryHtml = "";
 
-  // ▼ 総合評価判定
-  if(suggestions.length === 0){
-    summaryHtml = `
-      <div class="summary summary-good">
-        ✅ ほぼ問題はありません
-      </div>
-    `;
-  } else if(suggestions.length <= 2){
-    summaryHtml = `
-      <div class="summary summary-warning">
-        ⚠ 軽微な修正をおすすめします
-      </div>
-    `;
-  } else {
-    summaryHtml = `
-      <div class="summary summary-bad">
-        ❌ 修正が多く必要です
-      </div>
-    `;
-  }
+// ▼ 総合評価判定
+if(suggestions.length <= 1){
+  summaryHtml = `
+    <div class="summary summary-good">
+      ✅ ほぼ問題はありません
+    </div>
+  `;
+} else if(suggestions.length <= 3){
+  summaryHtml = `
+    <div class="summary summary-warning">
+      ⚠ 軽微な修正をおすすめします
+    </div>
+  `;
+} else {
+  summaryHtml = `
+    <div class="summary summary-bad">
+      ❌ 修正が多く必要です
+    </div>
+  `;
+}
 
   const suggestion = suggestions[0] || "";
 
@@ -218,4 +218,5 @@ function toast(msg){
   clearTimeout(toastTimer);
   alert(msg);
 }
+
 
