@@ -275,7 +275,6 @@ $("btnCheckBulk").addEventListener("click", async ()=>{
 });
 
 function renderBulkResult(data){
-
   const issues = data.issues || [];
 
   renderBulkSummary(data);
@@ -284,11 +283,20 @@ function renderBulkResult(data){
 
   $("bulkIssues").innerHTML = issues.map(issue => `
     <div class="issue">
-      ...
+      <div class="type">${issue.type}</div>
+      <div class="msg">${escapeHtml(issue.message)}</div>
+      <div class="sug">${escapeHtml(issue.suggestion || "")}</div>
     </div>
   `).join("");
 
   $("bulkCorrected").textContent = data.corrected || "";
+
+  const correctedText = data.corrected || "";
+  const copyBtn = $("btnCopyBulkCorrected");
+  copyBtn.disabled = !correctedText;
+  copyBtn.onclick = (e) => copyToClipboard(correctedText, "修正版をコピーしました", e.currentTarget);
+}
+
 }
 
 function renderBulkSummary(data){
@@ -340,4 +348,3 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
-
