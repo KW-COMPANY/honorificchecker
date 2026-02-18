@@ -216,7 +216,22 @@ async function copyToClipboard(text, okMsg, btn){
 let toastTimer;
 function toast(msg){
   clearTimeout(toastTimer);
-  alert(msg);
+
+  let box = document.getElementById("toastBox");
+
+  if(!box){
+    box = document.createElement("div");
+    box.id = "toastBox";
+    box.className = "toast";
+    document.body.appendChild(box);
+  }
+
+  box.textContent = msg;
+  box.classList.add("show");
+
+  toastTimer = setTimeout(()=>{
+    box.classList.remove("show");
+  }, 2000);
 }
 
 /* ========= Bulk check ========= */
@@ -307,3 +322,4 @@ function renderBulkSummary(data){
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
