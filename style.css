@@ -272,3 +272,11 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+.toast.success {
+  background: #27ae60;
+}
+
+.toast.error {
+  background: #c0392b;
+}
