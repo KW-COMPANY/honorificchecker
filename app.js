@@ -297,8 +297,6 @@ function renderBulkResult(data){
   copyBtn.onclick = (e) => copyToClipboard(correctedText, "修正版をコピーしました", e.currentTarget);
 }
 
-}
-
 function renderBulkSummary(data){
   const box = $("bulkSummary");
   box.innerHTML = "";
@@ -348,3 +346,4 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
