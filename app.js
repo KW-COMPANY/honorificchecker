@@ -202,7 +202,7 @@ async function copyToClipboard(text, okMsg, btn){
     await navigator.clipboard.writeText(text);
     toast(okMsg || "コピーしました", "success");
   }catch{
-    toast("コピーできませんでした");
+    toast("コピーできませんでした", "error");
   }
 }
 
@@ -316,4 +316,5 @@ function renderBulkSummary(data){
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
 
