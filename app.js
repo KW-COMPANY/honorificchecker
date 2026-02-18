@@ -200,7 +200,7 @@ function escapeHtml(str){
 async function copyToClipboard(text, okMsg, btn){
   try{
     await navigator.clipboard.writeText(text);
-    toast(okMsg || "コピーしました");
+    toast(okMsg || "コピーしました", "success");
   }catch{
     toast("コピーできませんでした");
   }
@@ -316,3 +316,4 @@ function renderBulkSummary(data){
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
