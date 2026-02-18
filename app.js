@@ -286,36 +286,43 @@ function renderBulkSummary(data){
   let score = 0;
 
   issues.forEach(issue=>{
-    if(issue.type === "keigo") score += 3;
-    else if(issue.type === "grammar") score += 2;
-    else score += 1;
+    let weight = 1;
+
+    if(issue.type === "keigo") weight = 4;
+    else if(issue.type === "grammar") weight = 3;
+    else if(issue.type === "kanji") weight = 2;
+    else weight = 1;
+
+    score += weight;  // ← 数 × 重さ の合計
   });
 
   let html = "";
 
-  if(score <= 2){
-    html = `
-      <div class="summary summary-good">
-        ✅ 大きな問題はありません
-      </div>
-    `;
-  } else if(score <= 6){
-    html = `
-      <div class="summary summary-warning">
-        ⚠ 一部修正をおすすめします
-      </div>
-    `;
-  } else {
-    html = `
-      <div class="summary summary-bad">
-        ❌ 全体的に見直しが必要です
-      </div>
-    `;
+  if(score === 0){
+    html = `<div class="summary summary-good">
+      🏆 非常に丁寧で自然な文章です
+    </div>`;
   }
-
-  box.innerHTML = html;
-}
-
+  else if(score <= 3){
+    html = `<div class="summary summary-good">
+      ✅ ほぼ問題はありません
+    </div>`;
+  }
+  else if(score <= 7){
+    html = `<div class="summary summary-warning">
+      ⚠ 軽微な修正をおすすめします
+    </div>`;
+  }
+  else if(score <= 12){
+    html = `<div class="summary summary-warning">
+      ⚠ 全体的に見直すとより良くなります
+    </div>`;
+  }
+  else{
+    html = `<div class="summary summary-bad">
+      ❌ 修正が多く必要です
+    </div>`;
+  }
 
   box.innerHTML = html;
 }
