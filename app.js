@@ -136,27 +136,43 @@ function renderShortResult(data){
   const suggestions = data.suggestions || [];
   let summaryHtml = "";
 
-let level = "good";
+const suggestions = data.suggestions || [];
+
+let score = 0;
 
 if(data.label === "誤用/不適切"){
-  level = "bad";
-} else if(suggestions.length >= 2){
-  level = "warning";
+  score += 4;
+}
+if(data.label === "謙譲語"){
+  score += 2;
 }
 
-if(level === "good"){
+score += suggestions.length;
+
+let summaryHtml = "";
+
+if(score === 0){
   summaryHtml = `
     <div class="summary summary-good">
-      ✅ 問題はほぼありません
+      🏆 完全に自然な文章です
     </div>
   `;
-} else if(level === "warning"){
+}
+else if(score <= 2){
+  summaryHtml = `
+    <div class="summary summary-good">
+      ✅ ほぼ問題はありません
+    </div>
+  `;
+}
+else if(score <= 4){
   summaryHtml = `
     <div class="summary summary-warning">
       ⚠ 一部修正をおすすめします
     </div>
   `;
-} else {
+}
+else{
   summaryHtml = `
     <div class="summary summary-bad">
       ❌ 明確な誤用があります
