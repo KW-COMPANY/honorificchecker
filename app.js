@@ -100,7 +100,7 @@ async function postJson(path, body){
 
 $("btnCheckShort").addEventListener("click", async ()=>{
   const text = $("shortInput").value.trim();
-  if(!text){ return toast("文を入力してください"); }
+  if(!text){ return toast("文を入力してください", "error"); }
 
   $("shortResult").classList.add("hidden");
   $("btnCopyShortSuggestion").disabled = true;
@@ -316,5 +316,6 @@ function renderBulkSummary(data){
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
 
 
