@@ -134,51 +134,51 @@ function renderShortResult(data){
   }
 
   const suggestions = data.suggestions || [];
+
+  let score = 0;
+
+  // ラベルの重み
+  if(data.label === "誤用/不適切"){
+    score += 4;
+  }
+  if(data.label === "謙譲語"){
+    score += 2;
+  }
+
+  // 修正数も加算
+  score += suggestions.length;
+
   let summaryHtml = "";
 
-const suggestions = data.suggestions || [];
+  if(score === 0){
+    summaryHtml = `
+      <div class="summary summary-good">
+        🏆 完全に自然な文章です
+      </div>
+    `;
+  }
+  else if(score <= 2){
+    summaryHtml = `
+      <div class="summary summary-good">
+        ✅ ほぼ問題はありません
+      </div>
+    `;
+  }
+  else if(score <= 4){
+    summaryHtml = `
+      <div class="summary summary-warning">
+        ⚠ 一部修正をおすすめします
+      </div>
+    `;
+  }
+  else{
+    summaryHtml = `
+      <div class="summary summary-bad">
+        ❌ 明確な誤用があります
+      </div>
+    `;
+  }
 
-let score = 0;
-
-if(data.label === "誤用/不適切"){
-  score += 4;
-}
-if(data.label === "謙譲語"){
-  score += 2;
-}
-
-score += suggestions.length;
-
-let summaryHtml = "";
-
-if(score === 0){
-  summaryHtml = `
-    <div class="summary summary-good">
-      🏆 完全に自然な文章です
-    </div>
-  `;
-}
-else if(score <= 2){
-  summaryHtml = `
-    <div class="summary summary-good">
-      ✅ ほぼ問題はありません
-    </div>
-  `;
-}
-else if(score <= 4){
-  summaryHtml = `
-    <div class="summary summary-warning">
-      ⚠ 一部修正をおすすめします
-    </div>
-  `;
-}
-else{
-  summaryHtml = `
-    <div class="summary summary-bad">
-      ❌ 明確な誤用があります
-    </div>
-  `;
-}
   const suggestion = suggestions[0] || "";
 
   $("btnCopyShortSuggestion").disabled = !suggestion;
