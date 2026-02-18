@@ -136,26 +136,33 @@ function renderShortResult(data){
   const suggestions = data.suggestions || [];
   let summaryHtml = "";
 
-if(suggestions.length <= 1){
+let level = "good";
+
+if(data.label === "誤用/不適切"){
+  level = "bad";
+} else if(suggestions.length >= 2){
+  level = "warning";
+}
+
+if(level === "good"){
   summaryHtml = `
     <div class="summary summary-good">
-      ✅ ほぼ問題はありません
+      ✅ 問題はほぼありません
     </div>
   `;
-} else if(suggestions.length <= 3){
+} else if(level === "warning"){
   summaryHtml = `
     <div class="summary summary-warning">
-      ⚠ 軽微な修正をおすすめします
+      ⚠ 一部修正をおすすめします
     </div>
   `;
 } else {
   summaryHtml = `
     <div class="summary summary-bad">
-      ❌ 修正が多く必要です
+      ❌ 明確な誤用があります
     </div>
   `;
 }
-
   const suggestion = suggestions[0] || "";
 
   $("btnCopyShortSuggestion").disabled = !suggestion;
@@ -300,3 +307,4 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
