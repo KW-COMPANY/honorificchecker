@@ -316,6 +316,3 @@ function renderBulkSummary(data){
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
-
-
