@@ -280,16 +280,15 @@ function renderBulkResult(data){
 
   renderBulkSummary(data);
 
+  $("bulkHighlighted").style.display = "none";
+
   $("bulkIssues").innerHTML = issues.map(issue => `
     <div class="issue">
-      <div class="type">${issue.type}</div>
-      <div class="msg">${escapeHtml(issue.message)}</div>
-      <div class="sug">${escapeHtml(issue.suggestion || "")}</div>
+      ...
     </div>
   `).join("");
 
   $("bulkCorrected").textContent = data.corrected || "";
-
 }
 
 function renderBulkSummary(data){
@@ -341,3 +340,4 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
