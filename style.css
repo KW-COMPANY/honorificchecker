@@ -296,3 +296,7 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+#bulkHighlighted {
+  display: none;
+}
