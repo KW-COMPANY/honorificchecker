@@ -14,7 +14,6 @@ const examples = {
 よろしくお願い申し上げます。`
 };
 
-/* ========= UI: Tabs ========= */
 const tabShort = $("tabShort");
 const tabBulk = $("tabBulk");
 const panelShort = $("panelShort");
@@ -36,7 +35,6 @@ function setTab(which){
 tabShort.addEventListener("click", ()=>setTab("short"));
 tabBulk.addEventListener("click", ()=>setTab("bulk"));
 
-/* ========= Modal ========= */
 const helpModal = $("helpModal");
 const helpBtn = $("helpBtn");
 
@@ -59,7 +57,6 @@ function closeModal(){
   helpModal?.classList.add("hidden");
 }
 
-/* ========= Examples ========= */
 document.body.addEventListener("click", (e)=>{
   const btn = e.target.closest("[data-example]");
   if(!btn) return;
@@ -73,7 +70,6 @@ document.body.addEventListener("click", (e)=>{
   }
 });
 
-/* ========= Clear ========= */
 $("btnClearShort").addEventListener("click", ()=>{
   $("shortInput").value = "";
   $("shortResult").classList.add("hidden");
@@ -89,7 +85,6 @@ $("btnClearBulk").addEventListener("click", ()=>{
   $("btnCopyBulkCorrected").disabled = true;
 });
 
-/* ========= API ========= */
 async function postJson(path, body){
   const res = await fetch(`${API_ENDPOINT}${path}`, {
     method: "POST",
@@ -103,7 +98,6 @@ async function postJson(path, body){
   return data;
 }
 
-/* ========= Short check ========= */
 $("btnCheckShort").addEventListener("click", async ()=>{
   const text = $("shortInput").value.trim();
   if(!text){ return toast("文を入力してください"); }
@@ -142,7 +136,6 @@ function renderShortResult(data){
   const suggestions = data.suggestions || [];
   let summaryHtml = "";
 
-// ▼ 総合評価判定
 if(suggestions.length <= 1){
   summaryHtml = `
     <div class="summary summary-good">
@@ -214,7 +207,7 @@ async function copyToClipboard(text, okMsg, btn){
 }
 
 let toastTimer;
-function toast(msg){
+function toast(msg, type = "normal"){
   clearTimeout(toastTimer);
 
   let box = document.getElementById("toastBox");
@@ -227,6 +220,11 @@ function toast(msg){
   }
 
   box.textContent = msg;
+
+  box.className = "toast";
+
+  box.classList.add(type);
+
   box.classList.add("show");
 
   toastTimer = setTimeout(()=>{
@@ -234,7 +232,6 @@ function toast(msg){
   }, 2000);
 }
 
-/* ========= Bulk check ========= */
 $("btnCheckBulk").addEventListener("click", async ()=>{
   const text = $("bulkInput").value.trim();
   if(!text){ return toast("メール本文を入力してください"); }
@@ -259,10 +256,8 @@ function renderBulkResult(data){
 
   const issues = data.issues || [];
 
-  // ▼ 総合評価表示
   renderBulkSummary(data);
 
-  // ▼ 指摘一覧表示
   $("bulkIssues").innerHTML = issues.map(issue => `
     <div class="issue">
       <div class="type">${issue.type}</div>
@@ -271,7 +266,6 @@ function renderBulkResult(data){
     </div>
   `).join("");
 
-  // ▼ 修正版全文
   $("bulkCorrected").textContent = data.corrected || "";
 
 }
@@ -322,4 +316,3 @@ function renderBulkSummary(data){
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
