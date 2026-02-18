@@ -194,7 +194,6 @@ if(level === "good"){
   `;
 }
 
-/* ========= Utils ========= */
 function escapeHtml(str){
   return String(str)
     .replaceAll("&","&amp;")
