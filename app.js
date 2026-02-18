@@ -281,26 +281,34 @@ function renderBulkSummary(data){
   const box = $("bulkSummary");
   box.innerHTML = "";
 
-  const count = (data.issues || []).length;
+  const issues = data.issues || [];
+
+  let score = 0;
+
+  issues.forEach(issue=>{
+    if(issue.type === "keigo") score += 3;
+    else if(issue.type === "grammar") score += 2;
+    else score += 1;
+  });
 
   let html = "";
 
-  if(count <= 1){
+  if(score <= 2){
     html = `
       <div class="summary summary-good">
-        ✅ ほぼ問題はありません
+        ✅ 大きな問題はありません
       </div>
     `;
-  } else if(count <= 3){
+  } else if(score <= 6){
     html = `
       <div class="summary summary-warning">
-        ⚠ 軽微な修正をおすすめします
+        ⚠ 一部修正をおすすめします
       </div>
     `;
   } else {
     html = `
       <div class="summary summary-bad">
-        ❌ 修正が多く必要です
+        ❌ 全体的に見直しが必要です
       </div>
     `;
   }
@@ -308,3 +316,6 @@ function renderBulkSummary(data){
   box.innerHTML = html;
 }
 
+
+  box.innerHTML = html;
+}
