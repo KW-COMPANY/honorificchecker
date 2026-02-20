@@ -137,7 +137,6 @@ function renderShortResult(data){
 
   let score = 0;
 
-  // ラベルの重み
   if(data.label === "誤用/不適切"){
     score += 4;
   }
@@ -145,7 +144,6 @@ function renderShortResult(data){
     score += 2;
   }
 
-  // 修正数も加算
   score += suggestions.length;
 
   let summaryHtml = "";
@@ -346,4 +344,3 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
-
