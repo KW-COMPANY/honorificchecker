@@ -32,8 +32,27 @@ function setTab(which){
     panelShort.classList.add("hidden");
   }
 }
-tabShort.addEventListener("click", ()=>setTab("short"));
-tabBulk.addEventListener("click", ()=>setTab("bulk"));
+tabShort.addEventListener("click", ()=>{
+  setTab("short");
+
+  setTimeout(()=>{
+    $("shortInput").scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }, 50);
+});
+
+tabBulk.addEventListener("click", ()=>{
+  setTab("bulk");
+
+  setTimeout(()=>{
+    $("bulkInput").scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }, 50);
+});
 
 const helpModal = $("helpModal");
 const helpBtn = $("helpBtn");
@@ -385,6 +404,7 @@ function renderHighlightedText(originalText, issues) {
 
   box.innerHTML = html;
 }
+
 
 
 
