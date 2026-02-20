@@ -321,17 +321,17 @@ function renderBulkSummary(data){
       🏆 非常に丁寧で自然な文章です
     </div>`;
   }
-  else if(score <= 3){
+  else if(score <= 4){
     html = `<div class="summary summary-good">
       ✅ ほぼ問題はありません
     </div>`;
   }
-  else if(score <= 7){
+  else if(score <= 9){
     html = `<div class="summary summary-warning">
       ⚠ 軽微な修正をおすすめします
     </div>`;
   }
-  else if(score <= 12){
+  else if(score <= 15){
     html = `<div class="summary summary-warning">
       ⚠ 全体的に見直すとより良くなります
     </div>`;
@@ -344,5 +344,6 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
 
 
