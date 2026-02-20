@@ -404,9 +404,3 @@ function renderHighlightedText(originalText, issues) {
 
   box.innerHTML = html;
 }
-
-
-
-
-
-
