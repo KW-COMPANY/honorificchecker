@@ -318,3 +318,87 @@ box.style.display = "block";
   copyBtn.disabled = !correctedText;
   copyBtn.onclick = (e) => copyToClipboard(correctedText, "修正版をコピーしました", e.currentTarget);
 }
+function renderHighlightedText(originalText, issues) {
+  if (!originalText || !issues.length) {
+    return escapeHtml(originalText);
+  }
+
+  const sorted = [...issues].sort((a, b) => a.start - b.start);
+
+  let result = "";
+  let lastIndex = 0;
+
+  sorted.forEach(issue => {
+    const start = issue.start;
+    const end = issue.end;
+
+    if (start < lastIndex) return;
+
+    result += escapeHtml(originalText.slice(lastIndex, start));
+
+    const typeClass = {
+      typo: "hl-typo",
+      kanji: "hl-kanji",
+      keigo: "hl-keigo",
+      grammar: "hl-grammar"
+    }[issue.type] || "";
+
+    result += `<span class="hl ${typeClass}" title="${escapeHtml(issue.message)}">` +
+      escapeHtml(originalText.slice(start, end)) +
+      `</span>`;
+
+    lastIndex = end;
+  });
+
+  result += escapeHtml(originalText.slice(lastIndex));
+
+  return result;
+}
+function renderBulkSummary(data){
+  const box = $("bulkSummary");
+  box.innerHTML = "";
+
+  const issues = data.issues || [];
+
+  let score = 0;
+
+  issues.forEach(issue=>{
+    let weight = 1;
+
+    if(issue.type === "keigo") weight = 3;
+    else if(issue.type === "grammar") weight = 2;
+    else if(issue.type === "kanji") weight = 1;
+
+    score += weight;
+  });
+
+  let html = "";
+
+  if(score === 0){
+    html = `<div class="summary summary-good">
+      🏆 非常に丁寧で自然な文章です
+    </div>`;
+  }
+  else if(score <= 4){
+    html = `<div class="summary summary-good">
+      ✅ ほぼ問題はありません
+    </div>`;
+  }
+  else if(score <= 9){
+    html = `<div class="summary summary-warning">
+      ⚠ 軽微な修正をおすすめします
+    </div>`;
+  }
+  else if(score <= 15){
+    html = `<div class="summary summary-warning">
+      ⚠ 全体的に見直すとより良くなります
+    </div>`;
+  }
+  else{
+    html = `<div class="summary summary-bad">
+      ❌ 修正が多く必要です
+    </div>`;
+  }
+
+  box.innerHTML = html;
+}
