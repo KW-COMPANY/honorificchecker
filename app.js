@@ -306,9 +306,9 @@ function renderBulkSummary(data){
   issues.forEach(issue=>{
     let weight = 1;
 
-    if(issue.type === "keigo") weight = 4;
-    else if(issue.type === "grammar") weight = 3;
-    else if(issue.type === "kanji") weight = 2;
+    if(issue.type === "keigo") weight = 3;
+    else if(issue.type === "grammar") weight = 2;
+    else if(issue.type === "kanji") weight = 1;
     else weight = 1;
 
     score += weight;  // ← 数 × 重さ の合計
@@ -344,4 +344,5 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
 
