@@ -138,10 +138,10 @@ function renderShortResult(data){
   let score = 0;
 
   if(data.label === "誤用/不適切"){
-    score += 4;
+    score += 3;
   }
   if(data.label === "謙譲語"){
-    score += 2;
+    score += 1;
   }
 
   score += suggestions.length;
@@ -344,3 +344,4 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
