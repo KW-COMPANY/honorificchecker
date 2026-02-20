@@ -170,10 +170,10 @@
   border-radius: 6px;
   border: 1px solid rgba(255,255,255,.12);
 }
-.hl-typo{ background: rgba(250,204,21,.22); border-color: rgba(250,204,21,.35); }
-.hl-kanji{ background: rgba(251,146,60,.22); border-color: rgba(251,146,60,.35); }
-.hl-keigo{ background: rgba(251,113,133,.22); border-color: rgba(251,113,133,.35); }
-.hl-grammar{ background: rgba(192,132,252,.22); border-color: rgba(192,132,252,.35); }
+.hl-typo{ background: rgba(250,204,21,.35); border-color: rgba(250,204,21,.35); }
+.hl-kanji{ background: rgba(251,146,60,.35); border-color: rgba(251,146,60,.35); }
+.hl-keigo{ background: rgba(251,113,133,.35); border-color: rgba(251,113,133,.35); }
+.hl-grammar{ background: rgba(192,132,252,.35); border-color: rgba(192,132,252,.35); }
 
 .issue{
   border: 1px solid var(--border);
@@ -305,3 +305,4 @@
   background: rgba(2,6,23,.35);
   border: 1px solid var(--border);
 }
+
