@@ -277,7 +277,12 @@ function renderBulkResult(data){
 
   renderBulkSummary(data);
 
-  $("bulkHighlighted").style.display = "none";
+  const originalText = $("bulkInput").value;
+const highlightedHtml = renderHighlightedText(originalText, issues);
+
+const box = $("bulkHighlighted");
+box.innerHTML = highlightedHtml;
+box.style.display = "block";
 
   $("bulkIssues").innerHTML = issues.map(issue => `
     <div class="issue">
@@ -380,6 +385,7 @@ function renderHighlightedText(originalText, issues) {
 
   box.innerHTML = html;
 }
+
 
 
 
