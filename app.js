@@ -319,8 +319,42 @@ box.style.display = "block";
   copyBtn.onclick = (e) => copyToClipboard(correctedText, "修正版をコピーしました", e.currentTarget);
 }
 
-function renderBulkSummary(data){
 function renderHighlightedText(originalText, issues) {
+  if (!originalText || !issues.length) {
+    return escapeHtml(originalText);
+  }
+
+  const sorted = [...issues].sort((a, b) => a.start - b.start);
+
+  let result = "";
+  let lastIndex = 0;
+
+  sorted.forEach(issue => {
+    const start = issue.start;
+    const end = issue.end;
+
+    if (start < lastIndex) return;
+
+    result += escapeHtml(originalText.slice(lastIndex, start));
+
+    const typeClass = {
+      typo: "hl-typo",
+      kanji: "hl-kanji",
+      keigo: "hl-keigo",
+      grammar: "hl-grammar"
+    }[issue.type] || "";
+
+    result += `<span class="hl ${typeClass}" title="${escapeHtml(issue.message)}">` +
+      escapeHtml(originalText.slice(start, end)) +
+      `</span>`;
+
+    lastIndex = end;
+  });
+
+  result += escapeHtml(originalText.slice(lastIndex));
+
+  return result;
+}
   if (!originalText || !issues.length) {
     return escapeHtml(originalText);
   }
@@ -404,3 +438,4 @@ function renderHighlightedText(originalText, issues) {
 
   box.innerHTML = html;
 }
+
