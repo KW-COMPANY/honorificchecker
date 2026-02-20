@@ -296,6 +296,42 @@ function renderBulkResult(data){
 }
 
 function renderBulkSummary(data){
+function renderHighlightedText(originalText, issues) {
+  if (!originalText || !issues.length) {
+    return escapeHtml(originalText);
+  }
+
+  const sorted = [...issues].sort((a, b) => a.start - b.start);
+
+  let result = "";
+  let lastIndex = 0;
+
+  sorted.forEach(issue => {
+    const start = issue.start;
+    const end = issue.end;
+
+    if (start < lastIndex) return; // 重複防止
+
+    result += escapeHtml(originalText.slice(lastIndex, start));
+
+    const typeClass = {
+      typo: "hl-typo",
+      kanji: "hl-kanji",
+      keigo: "hl-keigo",
+      grammar: "hl-grammar"
+    }[issue.type] || "";
+
+    result += `<span class="hl ${typeClass}" title="${escapeHtml(issue.message)}">` +
+      escapeHtml(originalText.slice(start, end)) +
+      `</span>`;
+
+    lastIndex = end;
+  });
+
+  result += escapeHtml(originalText.slice(lastIndex));
+
+  return result;
+}
   const box = $("bulkSummary");
   box.innerHTML = "";
 
@@ -344,6 +380,7 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+
 
 
 
