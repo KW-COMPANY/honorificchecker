@@ -128,7 +128,8 @@ $("btnCheckShort").addEventListener("click", async ()=>{
   $("btnCheckShort").innerHTML = `チェック中...`;
 
   try{
-    const data = await postJson("/api/check", { text });
+  const industry = $("industrySelect")?.value ?? "general";
+  const data = await postJson("/api/check", { text, industry });
     renderShortResult(data);
   }catch(err){
     renderShortResult({ error: err.message || String(err) });
