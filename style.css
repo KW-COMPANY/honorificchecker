@@ -314,3 +314,10 @@ footer a{
 .btn{
   cursor:pointer;
 }
+button{
+  cursor:pointer;
+}
+
+textarea::placeholder{
+  color:rgba(255,255,255,.45);
+}
