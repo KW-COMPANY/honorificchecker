@@ -280,7 +280,13 @@ $("btnCheckBulk").addEventListener("click", async ()=>{
   $("btnCheckBulk").innerHTML = "チェック中...";
 
   try{
-    const data = await postJson("/api/bulk", { text });
+
+    const industry = $("industrySelect")?.value ?? "general";
+
+    const data = await postJson("/api/bulk", {
+      text,
+      industry
+    });
 
     renderBulkResult(data);
 
