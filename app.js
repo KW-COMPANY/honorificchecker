@@ -109,7 +109,7 @@ if ($("btnClearBulk")) {
     $("bulkHighlighted").textContent = "";
     $("bulkIssues").innerHTML = "";
     $("bulkCorrected").textContent = "";
-    $("bulkRuleHints").classList.add("hidden");
+    $("bulkRuleHints")?.classList.add("hidden");
     $("btnCopyBulkCorrected").disabled = true;
   });
 
