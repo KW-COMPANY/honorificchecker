@@ -303,3 +303,10 @@
   border: 1px solid var(--border);
 }
 
+footer{
+  padding:30px 0;
+  color:rgba(255,255,255,.85);
+}
+footer a{
+  text-decoration:underline;
+}
