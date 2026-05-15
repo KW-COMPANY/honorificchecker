@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RXH5HHYN95"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -16,7 +17,6 @@ gtag('config', 'G-RXH5HHYN95');
 <title>ビジネス敬語の誤用をAIがチェック。短文・長文にも対応のAIツール｜敬語・謙譲語チェッカー</title>
 
 <meta name="description" content="ビジネス敬語の誤用（敬語/謙譲語/二重敬語/誤字脱字）をAIが即チェック。短文・メール全文一括にも対応。" />
-
 <meta name="google-site-verification" content="-wBn8yD4ggCjFXi7byvmKD5_VbTbnLzHEKXI7GnZbeI" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +38,10 @@ gtag('config', 'G-RXH5HHYN95');
 
 <header class="max-w-5xl mx-auto px-4 pt-8 pb-6">
 
+<div class="flex items-start justify-between gap-4">
+
+<div>
+
 <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
 <i class="fa-solid fa-spell-check mr-2 text-violet-300"></i>
 敬語・謙譲語チェッカー
@@ -47,34 +51,82 @@ gtag('config', 'G-RXH5HHYN95');
 ビジネス文の「敬語／謙譲語／誤用」判定＋修正文提案。メール一括チェックで誤字脱字も色分け。
 </p>
 
+</div>
+
+</div>
+
+<!-- 安全注意 -->
+<div class="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs sm:text-sm text-slate-200/90">
+<div class="flex gap-3">
+<i class="fa-solid fa-shield-halved mt-0.5 text-emerald-300"></i>
+<div>
+<p class="font-semibold text-slate-100">安心して使うために</p>
+<ul class="list-disc pl-5 mt-1 space-y-1">
+<li>個人情報や社外秘は入力しないでください。</li>
+<li>AIの結果は参考としてご利用ください。</li>
+</ul>
+</div>
+</div>
+</div>
+
 </header>
 
 <main class="max-w-5xl mx-auto px-4 pb-16">
 
+<!-- タブ -->
 <div class="flex flex-wrap gap-2">
 
 <button id="tabShort" class="tab tab-active">
+<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>
 短文チェック
 </button>
 
 <button id="tabBulk" class="tab">
+<i class="fa-solid fa-envelope-open-text mr-2"></i>
 長文チェック
 </button>
 
 </div>
 
+<!-- 短文 -->
 <section id="panelShort" class="mt-4">
 
 <div class="card">
 
+<div class="flex items-center justify-between flex-wrap gap-3">
+
 <h2 class="card-title">短文チェック</h2>
 
+<div class="flex flex-wrap gap-2">
+
+<button class="btn btn-ghost" data-example="short-1">例：二重敬語</button>
+<button class="btn btn-ghost" data-example="short-2">例：謙譲語の向き</button>
+<button class="btn btn-ghost" data-example="short-3">例：丁寧語</button>
+
+<button id="btnClearShort" class="btn btn-ghost">
+クリア
+</button>
+
+</div>
+
+</div>
+
+<label class="mt-4 block text-sm text-slate-200/90">
+業界・用途を選択（任意）
+</label>
+
 <select id="industrySelect" class="textarea" style="height:auto;padding:10px;">
+
 <option value="general">一般ビジネス</option>
 <option value="medical">医療・介護</option>
 <option value="legal">法律・士業</option>
 <option value="finance">金融・保険</option>
+
 </select>
+
+<label class="mt-4 block text-sm text-slate-200/90">
+チェックしたい文言
+</label>
 
 <textarea
 id="shortInput"
@@ -83,32 +135,60 @@ rows="3"
 placeholder="ここにテキストを入力してください。">
 </textarea>
 
-<div class="mt-4 flex gap-2">
+<div class="mt-4 flex flex-wrap gap-2">
 
 <button id="btnCheckShort" class="btn btn-primary">
+<i class="fa-solid fa-magnifying-glass mr-2"></i>
 チェックする
 </button>
 
 <button id="btnCopyShortSuggestion" class="btn btn-copy" disabled>
+<i class="fa-regular fa-copy mr-2"></i>
 修正文コピー
 </button>
 
 </div>
 
 <div id="shortRuleHints" class="mt-4 hidden"></div>
+
 <div id="shortResult" class="mt-4 hidden"></div>
 
 </div>
 
 </section>
 
+<!-- 長文 -->
 <section id="panelBulk" class="mt-4 hidden">
 
 <div class="card">
 
+<div class="flex items-center justify-between flex-wrap gap-3">
+
 <h2 class="card-title">
-メール一括チェック
+メール一括チェック（長文）
 </h2>
+
+<div class="flex flex-wrap gap-2">
+
+<button class="btn btn-ghost" data-example="bulk-1">
+例：お詫びメール
+</button>
+
+<button class="btn btn-ghost" data-example="bulk-2">
+例：日程調整
+</button>
+
+<button id="btnClearBulk" class="btn btn-ghost">
+クリア
+</button>
+
+</div>
+
+</div>
+
+<label class="mt-4 block text-sm text-slate-200/90">
+メール本文を貼り付け
+</label>
 
 <textarea
 id="bulkInput"
@@ -117,15 +197,26 @@ rows="10"
 placeholder="ここにテキストを入力してください。">
 </textarea>
 
-<div class="mt-4 flex gap-2">
+<div class="mt-4 flex flex-wrap gap-2 items-center">
 
 <button id="btnCheckBulk" class="btn btn-primary">
+<i class="fa-solid fa-highlighter mr-2"></i>
 一括チェック
 </button>
 
 <button id="btnCopyBulkCorrected" class="btn btn-copy" disabled>
+<i class="fa-regular fa-copy mr-2"></i>
 修正版コピー
 </button>
+
+<div class="ml-auto flex items-center gap-2 text-xs text-slate-200/80">
+
+<span class="badge badge-typo">誤字</span>
+<span class="badge badge-kanji">漢字</span>
+<span class="badge badge-keigo">敬語</span>
+<span class="badge badge-grammar">文法</span>
+
+</div>
 
 </div>
 
@@ -149,7 +240,8 @@ placeholder="ここにテキストを入力してください。">
 修正版（全文）
 </div>
 
-<pre id="bulkCorrected"
+<pre
+id="bulkCorrected"
 class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-100">
 </pre>
 
@@ -163,6 +255,30 @@ class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-100">
 
 </div>
 
+<!-- help modal -->
+
+<div id="helpModal" class="modal hidden">
+
+<div class="modal-backdrop" data-close="1"></div>
+
+<div class="modal-card">
+
+<h3 class="text-lg font-bold">使い方</h3>
+
+<p class="text-sm mt-2">
+短文またはメール本文を入力してチェックできます。
+</p>
+
+<button class="btn btn-primary mt-4" data-close="1">
+OK
+</button>
+
+</div>
+
+</div>
+
+<script src="./app.js"></script>
+
 <footer style="text-align:center;margin-top:40px;color:white;font-size:0.9em;">
 
 <a href="llms.txt" style="color:white;" target="_blank">
@@ -170,8 +286,6 @@ llms.txt
 </a>
 
 </footer>
-
-<script src="./app.js"></script>
 
 </body>
 </html>
