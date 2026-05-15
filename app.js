@@ -2,14 +2,14 @@
 設定
 ========================= */
 
-const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
-const $ = (id) => document.getElementById(id);
+const API_ENDPOINT="https://honorificchecker.gmo-k-watanabe.workers.dev";
+const $=(id)=>document.getElementById(id);
 
 /* =========================
 例文
 ========================= */
 
-const examples = {
+const examples={
 "short-1":"私が御社に伺わせていただきます。",
 "short-2":"社長にお伝えしてもらえますでしょうか。",
 "short-3":"資料を送付いたします。ご確認ください。",
@@ -22,7 +22,7 @@ const examples = {
 };
 
 /* =========================
-安全DOM操作
+安全DOM
 ========================= */
 
 function safeAddEvent(id,event,handler){
@@ -90,7 +90,7 @@ throw new Error("サーバー応答がJSONではありません");
 }
 
 if(!res.ok){
-throw new Error(data?.error || `HTTP ${res.status}`);
+throw new Error(data?.error||`HTTP ${res.status}`);
 }
 
 return data;
@@ -121,7 +121,7 @@ el.classList.remove("show");
 }
 
 /* =========================
-タブ切替
+タブ
 ========================= */
 
 const tabShort=$("tabShort");
@@ -156,7 +156,7 @@ safeAddEvent("tabShort","click",()=>setTab("short"));
 safeAddEvent("tabBulk","click",()=>setTab("bulk"));
 
 /* =========================
-例文挿入
+例文
 ========================= */
 
 document.body.addEventListener("click",(e)=>{
@@ -199,7 +199,7 @@ toast("コピーに失敗しました","error");
 短文チェック
 ========================= */
 
-safeAddEvent("btnCheckShort","click",async ()=>{
+safeAddEvent("btnCheckShort","click",async()=>{
 
 const text=$("shortInput").value.trim();
 
@@ -214,7 +214,7 @@ btn.innerHTML="チェック中...";
 
 try{
 
-const industry=$("industrySelect")?.value ?? "general";
+const industry=$("industrySelect")?.value??"general";
 
 const data=await postJson("/api/check",{text,industry});
 
@@ -251,7 +251,7 @@ return;
 
 }
 
-const suggestions=data.suggestions||[];
+const suggestions=data.ai?.suggestions||[];
 const suggestion=suggestions[0]||"";
 
 const copyBtn=$("btnCopyShortSuggestion");
@@ -266,12 +266,7 @@ copyToClipboard(suggestion,"修正文をコピーしました");
 
 }
 
-/* スコア */
-
 let score=0;
-
-if(data.label==="誤用/不適切") score+=3;
-if(data.label==="謙譲語") score+=1;
 
 score+=suggestions.length;
 
@@ -280,8 +275,6 @@ let summary="";
 if(score===0){
 summary=`<div class="summary summary-good">🏆 完全に自然な文章です</div>`;
 }else if(score<=2){
-summary=`<div class="summary summary-good">✅ ほぼ問題ありません</div>`;
-}else if(score<=4){
 summary=`<div class="summary summary-warning">⚠ 修正をおすすめします</div>`;
 }else{
 summary=`<div class="summary summary-bad">❌ 明確な誤用があります</div>`;
@@ -294,7 +287,7 @@ ${summary}
 <div class="result-card">
 
 <div class="font-semibold">理由</div>
-<div>${escapeHtml(data.reason||"")}</div>
+<div>${escapeHtml(data.ai?.reason||"")}</div>
 
 <div class="mt-3 font-semibold">修正案</div>
 
@@ -315,7 +308,7 @@ ${suggestions.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
 長文チェック
 ========================= */
 
-safeAddEvent("btnCheckBulk","click",async ()=>{
+safeAddEvent("btnCheckBulk","click",async()=>{
 
 const text=$("bulkInput").value.trim();
 
@@ -330,7 +323,7 @@ btn.innerHTML="チェック中...";
 
 try{
 
-const industry=$("industrySelect")?.value ?? "general";
+const industry=$("industrySelect")?.value??"general";
 
 const data=await postJson("/api/bulk",{text,industry});
 
@@ -338,7 +331,7 @@ renderBulkResult(data);
 
 }catch(err){
 
-toast(err.message || "エラー","error");
+toast(err.message||"エラー","error");
 
 }finally{
 
