@@ -199,7 +199,30 @@
     </div>
   </div>
 
-  <script src="./app.js"></script>
+  <script src="./app.js">const API_ENDPOINT =
+"https://あなたのworkers.workers.dev"
+
+async function checkKeigo(){
+
+const text = document.getElementById("input").value
+
+const res = await fetch(`${API_ENDPOINT}/check`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({text})
+})
+
+const data = await res.json()
+
+document.getElementById("score").innerText =
+"敬語スコア: " + data.score
+
+document.getElementById("result").innerText =
+data.improved
+
+}</script>
   <footer style="text-align:center; margin-top:40px; color:white; font-size:0.9em;">
   <a href="llms.txt" style="color:white;" target="_blank">
     llms.txt
