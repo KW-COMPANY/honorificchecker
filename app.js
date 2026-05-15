@@ -90,7 +90,14 @@ document.body.addEventListener("click", (e)=>{
   }
 });
 
-$("btnClearShort").addEventListener("click", ()=>{
+if ($("btnClearShort")) {
+  $("btnClearShort").addEventListener("click", ()=>{
+    $("shortInput").value = "";
+    $("shortResult").classList.add("hidden");
+    $("shortRuleHints").classList.add("hidden");
+    $("btnCopyShortSuggestion").disabled = true;
+  });
+}
   $("shortInput").value = "";
   $("shortResult").classList.add("hidden");
   $("shortRuleHints").classList.add("hidden");
