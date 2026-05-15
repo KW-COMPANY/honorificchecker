@@ -1,209 +1,177 @@
 <!doctype html>
 <html lang="ja">
 <head>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RXH5HHYN95"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RXH5HHYN95');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-RXH5HHYN95');
 </script>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ビジネス敬語の誤用をAIがチェック。短文・長文にも対応のAUツール｜敬語・謙譲語チェッカー</title>
-  <meta name="description" content="ビジネス敬語の誤用（敬語/謙譲語/二重敬語/誤字脱字）をAIが即チェック。短文・メール全文一括にも対応。" />
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<title>ビジネス敬語の誤用をAIがチェック。短文・長文にも対応のAIツール｜敬語・謙譲語チェッカー</title>
+
+<meta name="description" content="ビジネス敬語の誤用（敬語/謙譲語/二重敬語/誤字脱字）をAIが即チェック。短文・メール全文一括にも対応。" />
 
 <meta name="google-site-verification" content="-wBn8yD4ggCjFXi7byvmKD5_VbTbnLzHEKXI7GnZbeI" />
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="stylesheet" href="./style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="./style.css" />
+
 </head>
 
 <body class="min-h-screen bg-slate-950 text-slate-100">
-  <div class="bg-hero">
-    <header class="max-w-5xl mx-auto px-4 pt-8 pb-6">
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
-            <i class="fa-solid fa-spell-check mr-2 text-violet-300"></i>
-            敬語・謙譲語チェッカー
-          </h1>
-          <p class="mt-2 text-slate-200/90 text-sm sm:text-base">
-            ビジネス文の「敬語／謙譲語／誤用」判定＋修正文提案。メール一括チェックで誤字脱字も色分け。
-          </p>
-        </div>
-      </div>
 
-      <div class="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs sm:text-sm text-slate-200/90">
-        <div class="flex gap-3">
-          <i class="fa-solid fa-shield-halved mt-0.5 text-emerald-300"></i>
-          <div>
-            <p class="font-semibold text-slate-100">安心して使うために</p>
-            <ul class="list-disc pl-5 mt-1 space-y-1">
-              <li>個人情報や社外秘は入力しないでください。</li>
-              <li>AIの結果は参考としてご利用ください。</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </header>
+<div class="bg-hero">
 
-    <main class="max-w-5xl mx-auto px-4 pb-16">
-      <div class="flex flex-wrap gap-2">
-        <button id="tabShort" class="tab tab-active">
-          <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>短文（1文・フレーズ）
-        </button>
-        <button id="tabBulk" class="tab">
-          <i class="fa-solid fa-envelope-open-text mr-2"></i>長文（メール全文）
-        </button>
-      </div>
+<header class="max-w-5xl mx-auto px-4 pt-8 pb-6">
 
-      <section id="panelShort" class="mt-4">
-        <div class="card">
-          <div class="flex items-center justify-between flex-wrap gap-3">
-            <h2 class="card-title">短文チェック</h2>
-            <div class="flex flex-wrap gap-2">
-              <button class="btn btn-ghost" data-example="short-1">例：二重敬語</button>
-              <button class="btn btn-ghost" data-example="short-2">例：謙譲語の向き</button>
-              <button class="btn btn-ghost" data-example="short-3">例：丁寧語</button>
-              <button id="btnClearShort" class="btn btn-ghost">クリア</button>
-            </div>
-          </div>
+<h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
+<i class="fa-solid fa-spell-check mr-2 text-violet-300"></i>
+敬語・謙譲語チェッカー
+</h1>
 
-          <label class="mt-4 block text-sm text-slate-200/90">チェックしたい文言</label>
-<label class="mt-4 block text-sm text-slate-200/90">業界・用途を選択（任意）</label>
-<select id="industrySelect" class="textarea" style="height:auto; padding:10px;">
-  <option value="general">一般ビジネス</option>
-  <option value="medical">医療・介護</option>
-  <option value="legal">法律・士業</option>
-  <option value="finance">金融・保険</option>
+<p class="mt-2 text-slate-200/90 text-sm sm:text-base">
+ビジネス文の「敬語／謙譲語／誤用」判定＋修正文提案。メール一括チェックで誤字脱字も色分け。
+</p>
+
+</header>
+
+<main class="max-w-5xl mx-auto px-4 pb-16">
+
+<div class="flex flex-wrap gap-2">
+
+<button id="tabShort" class="tab tab-active">
+短文チェック
+</button>
+
+<button id="tabBulk" class="tab">
+長文チェック
+</button>
+
+</div>
+
+<section id="panelShort" class="mt-4">
+
+<div class="card">
+
+<h2 class="card-title">短文チェック</h2>
+
+<select id="industrySelect" class="textarea" style="height:auto;padding:10px;">
+<option value="general">一般ビジネス</option>
+<option value="medical">医療・介護</option>
+<option value="legal">法律・士業</option>
+<option value="finance">金融・保険</option>
 </select>
-          <textarea id="shortInput" class="textarea" rows="3" placeholder="ここにテキストを入力してください。"></textarea>
 
-          <div class="mt-4 flex flex-wrap gap-2">
-            <button id="btnCheckShort" class="btn btn-primary">
-              <i class="fa-solid fa-magnifying-glass mr-2"></i>チェックする
-            </button>
-            <button id="btnCopyShortSuggestion" class="btn btn-copy" disabled>
-              <i class="fa-regular fa-copy mr-2"></i>修正文をコピー
-            </button>
-          </div>
+<textarea
+id="shortInput"
+class="textarea"
+rows="3"
+placeholder="ここにテキストを入力してください。">
+</textarea>
 
-          <div id="shortRuleHints" class="mt-4 hidden"></div>
-          <div id="shortResult" class="mt-4 hidden"></div>
-          <div id="score"></div>
+<div class="mt-4 flex gap-2">
 
-<div id="result"></div>
-        </div>
-      </section>
+<button id="btnCheckShort" class="btn btn-primary">
+チェックする
+</button>
 
-      <section id="panelBulk" class="mt-4 hidden">
-        <div class="card">
-          <div class="flex items-center justify-between flex-wrap gap-3">
-            <h2 class="card-title">メール一括チェック（長文）</h2>
-            <div class="flex flex-wrap gap-2">
-              <button class="btn btn-ghost" data-example="bulk-1">例：お詫びメール</button>
-              <button class="btn btn-ghost" data-example="bulk-2">例：日程調整</button>
-              <button id="btnClearBulk" class="btn btn-ghost">クリア</button>
-            </div>
-          </div>
+<button id="btnCopyShortSuggestion" class="btn btn-copy" disabled>
+修正文コピー
+</button>
 
-          <label class="mt-4 block text-sm text-slate-200/90">メール本文を貼り付け（個人情報含む非公開情報は入力しない様ご注意ください）</label>
-          <textarea id="bulkInput" class="textarea" rows="10" placeholder="ここにテキストを入力してください。"></textarea>
+</div>
 
-          <div class="mt-4 flex flex-wrap gap-2 items-center">
-            <button id="btnCheckBulk" class="btn btn-primary">
-              <i class="fa-solid fa-highlighter mr-2"></i>一括チェックする
-            </button>
-            <button id="btnCopyBulkCorrected" class="btn btn-copy" disabled>
-              <i class="fa-regular fa-copy mr-2"></i>修正版をコピー
-            </button>
+<div id="shortRuleHints" class="mt-4 hidden"></div>
+<div id="shortResult" class="mt-4 hidden"></div>
 
-            <div class="ml-auto flex items-center gap-2 text-xs text-slate-200/80">
-              <span class="badge badge-typo">誤字</span>
-              <span class="badge badge-kanji">漢字</span>
-              <span class="badge badge-keigo">敬語</span>
-              <span class="badge badge-grammar">文法</span>
-            </div>
-          </div>
+</div>
 
-          <div id="bulkRuleHints" class="mt-4 hidden"></div>
-         <div id="bulkSummary"></div>
+</section>
+
+<section id="panelBulk" class="mt-4 hidden">
+
+<div class="card">
+
+<h2 class="card-title">
+メール一括チェック
+</h2>
+
+<textarea
+id="bulkInput"
+class="textarea"
+rows="10"
+placeholder="ここにテキストを入力してください。">
+</textarea>
+
+<div class="mt-4 flex gap-2">
+
+<button id="btnCheckBulk" class="btn btn-primary">
+一括チェック
+</button>
+
+<button id="btnCopyBulkCorrected" class="btn btn-copy" disabled>
+修正版コピー
+</button>
+
+</div>
+
+<div id="bulkSummary"></div>
+
 <div id="bulkHighlighted" style="display:none;"></div>
-          
-            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div class="text-sm font-semibold text-slate-100">指摘一覧</div>
-              <div id="bulkIssues" class="mt-3 space-y-2"></div>
-            </div>
-          </div>
 
-          <div class="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
-            <div class="flex items-center justify-between gap-2 flex-wrap">
-              <div class="text-sm font-semibold text-slate-100">修正版（全文）</div>
-            </div>
-            <pre id="bulkCorrected" class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-100"></pre>
-          </div>
-        </div>
-      </section>
+<div class="rounded-xl border border-white/10 bg-white/5 p-4">
 
-      <footer class="mt-10 text-xs text-slate-200/70">
-      </footer>
-    </main>
-  </div>
+<div class="text-sm font-semibold text-slate-100">
+指摘一覧
+</div>
 
-  <div id="helpModal" class="modal hidden" aria-hidden="true">
-    <div class="modal-backdrop" data-close="1"></div>
-    <div class="modal-card">
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <h3 class="text-lg font-bold">使い方（セットアップ含む）</h3>
-          <p class="text-sm text-slate-200/90 mt-1">非エンジニア向けに、最低限の手順で公開できます。</p>
-        </div>
-        <button class="btn btn-ghost" data-close="1"><i class="fa-solid fa-xmark"></i></button>
-      </div>
+<div id="bulkIssues" class="mt-3 space-y-2"></div>
 
-      <div class="mt-4 text-sm text-slate-200/90 space-y-3 leading-7">
-        <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-          <div class="font-semibold text-slate-100">1) まず短文/メールを入力してチェック</div>
-          <div>タブで「短文」「メール一括」を切り替え、コピペ→ボタンで実行。結果はカード表示、コピーも可能です。</div>
-        </div>
+</div>
 
-        <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-          <div class="font-semibold text-slate-100">2) 重要：APIキーはブラウザに置かない</div>
-          <div>Google AI StudioのAPIキーは、Cloudflare Workersの環境変数 <code class="code">GEMINI_API_KEY</code> に保存します。</div>
-        </div>
+<div class="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
 
-        <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-          <div class="font-semibold text-slate-100">3) 編集が必要なのは基本1か所</div>
-          <div><code class="code">app.js</code> の <code class="code">API_ENDPOINT</code> を、あなたのWorkers URLに変更します。</div>
-        </div>
+<div class="text-sm font-semibold text-slate-100">
+修正版（全文）
+</div>
 
-        <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-          <div class="font-semibold text-slate-100">4) セットアップ詳細</div>
-          <div class="text-slate-200/90">
-            この回答内の「SETUP手順」をそのまま順番に実行してください（GitHub Pages / Workers / APIキー取得 / 動作確認）。
-          </div>
-        </div>
-      </div>
+<pre id="bulkCorrected"
+class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-100">
+</pre>
 
-      <div class="mt-5 flex justify-end">
-        <button class="btn btn-primary" data-close="1">OK</button>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <footer style="text-align:center; margin-top:40px; color:white; font-size:0.9em;">
-  <a href="llms.txt" style="color:white;" target="_blank">
-    llms.txt
-  </a>
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<footer style="text-align:center;margin-top:40px;color:white;font-size:0.9em;">
+
+<a href="llms.txt" style="color:white;" target="_blank">
+llms.txt
+</a>
+
 </footer>
+
+<script src="./app.js"></script>
+
 </body>
 </html>
-<script src="./app.js"></script>
