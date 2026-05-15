@@ -116,7 +116,40 @@ async function postJson(path, body){
   }
   return data;
 }
+async function checkKeigo(){
 
+const text =
+document.getElementById("inputText").value
+
+const industry =
+document.getElementById("industry").value
+
+const res = await fetch(
+"YOUR_WORKERS_URL",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+text:text,
+industry:industry
+})
+}
+)
+
+const data = await res.json()
+
+console.log(data)
+
+// 結果表示
+document.getElementById("score").innerText =
+"敬語スコア：" + data.score
+
+document.getElementById("result").innerText =
+data.improved_text
+
+}
 $("btnCheckShort").addEventListener("click", async ()=>{
   const text = $("shortInput").value.trim();
   if(!text){ return toast("文を入力してください", "error"); }
