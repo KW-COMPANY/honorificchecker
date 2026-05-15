@@ -268,7 +268,8 @@ copyToClipboard(suggestion,"修正文をコピーしました");
 
 let score=0;
 
-score+=suggestions.length;
+score += suggestions.length;
+score += data.rules?.length || 0;
 
 let summary="";
 
