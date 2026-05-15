@@ -403,3 +403,23 @@ function renderBulkSummary(data){
 
   box.innerHTML = html;
 }
+async function checkKeigo(){
+
+const text=document.getElementById("input").value
+
+const res=await fetch("WORKERS_URL",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+text:text,
+industry:"general"
+})
+})
+
+const data=await res.json()
+
+console.log(data)
+
+}
