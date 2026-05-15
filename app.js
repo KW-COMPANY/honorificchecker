@@ -304,7 +304,9 @@ function renderBulkResult(data){
   renderBulkSummary(data);
 
   const originalText = $("bulkInput").value;
-const highlightedHtml = renderHighlightedText(originalText, issues);
+const highlightedHtml = issues.length
+  ? renderHighlightedText(originalText, issues)
+  : escapeHtml(originalText);
 
 const box = $("bulkHighlighted");
 box.innerHTML = highlightedHtml;
