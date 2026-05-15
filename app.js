@@ -103,14 +103,15 @@ if ($("btnClearShort")) {
   $("shortRuleHints").classList.add("hidden");
   $("btnCopyShortSuggestion").disabled = true;
 });
-$("btnClearBulk").addEventListener("click", ()=>{
-  $("bulkInput").value = "";
-  $("bulkHighlighted").textContent = "";
-  $("bulkIssues").innerHTML = "";
-  $("bulkCorrected").textContent = "";
-  $("bulkRuleHints").classList.add("hidden");
-  $("btnCopyBulkCorrected").disabled = true;
-});
+if ($("btnClearBulk")) {
+  $("btnClearBulk").addEventListener("click", ()=>{
+    $("bulkInput").value = "";
+    $("bulkHighlighted").textContent = "";
+    $("bulkIssues").innerHTML = "";
+    $("bulkCorrected").textContent = "";
+    $("bulkRuleHints").classList.add("hidden");
+    $("btnCopyBulkCorrected").disabled = true;
+  });
 
 async function postJson(path, body){
   const res = await fetch(`${API_ENDPOINT}${path}`, {
