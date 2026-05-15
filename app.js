@@ -3,101 +3,97 @@
 ========================= */
 
 const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
-
 const $ = (id) => document.getElementById(id);
+
+/* =========================
+例文
+========================= */
+
+const examples = {
+"short-1":"私が御社に伺わせていただきます。",
+"short-2":"社長にお伝えしてもらえますでしょうか。",
+"short-3":"資料を送付いたします。ご確認ください。",
+"bulk-1":`お世話になっております。株式会社サンプルの田中です。
+この度はご迷惑をお掛けしてしまい大変申し訳ございません。
+本日中にご連絡差し上げますので、何卒よろしくお願い致します。`,
+"bulk-2":`お世話になっております。株式会社サンプルの田中です。
+来週の打ち合わせ日程について、ご都合の良い候補日を3つほど頂けますでしょうか。
+よろしくお願い申し上げます。`
+};
 
 /* =========================
 安全DOM操作
 ========================= */
 
-function safeAddEvent(id, event, handler){
-  const el = $(id);
-  if(el) el.addEventListener(event, handler);
+function safeAddEvent(id,event,handler){
+const el=$(id);
+if(el) el.addEventListener(event,handler);
 }
 
 function safeShow(id){
-  const el=$(id);
-  if(el) el.classList.remove("hidden");
+const el=$(id);
+if(el) el.classList.remove("hidden");
 }
 
 function safeHide(id){
-  const el=$(id);
-  if(el) el.classList.add("hidden");
+const el=$(id);
+if(el) el.classList.add("hidden");
 }
 
 function escapeHtml(str){
-  return String(str)
-  .replaceAll("&","&amp;")
-  .replaceAll("<","&lt;")
-  .replaceAll(">","&gt;")
-  .replaceAll('"'," &quot;")
-  .replaceAll("'","&#039;");
+return String(str)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 }
 
 /* =========================
-通信ユーティリティ
+通信
 ========================= */
 
-async function fetchWithTimeout(url, options={}, timeout=20000){
+async function fetchWithTimeout(url,options={},timeout=20000){
 
-  const controller=new AbortController();
-  const id=setTimeout(()=>controller.abort(),timeout);
+const controller=new AbortController();
+const id=setTimeout(()=>controller.abort(),timeout);
 
-  try{
+try{
 
-    const res=await fetch(url,{
-      ...options,
-      signal:controller.signal
-    });
+const res=await fetch(url,{...options,signal:controller.signal});
+clearTimeout(id);
+return res;
 
-    clearTimeout(id);
+}catch(err){
 
-    return res;
-
-  }catch(err){
-
-    clearTimeout(id);
-    throw err;
-
-  }
+clearTimeout(id);
+throw err;
 
 }
 
-async function postJson(path, body){
+}
 
-  try{
+async function postJson(path,body){
 
-    const res=await fetchWithTimeout(`${API_ENDPOINT}${path}`,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify(body)
-    });
+const res=await fetchWithTimeout(`${API_ENDPOINT}${path}`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body)
+});
 
-    let data;
+let data;
 
-    try{
-      data=await res.json();
-    }catch{
-      throw new Error("サーバー応答がJSONではありません");
-    }
+try{
+data=await res.json();
+}catch{
+throw new Error("サーバー応答がJSONではありません");
+}
 
-    if(!res.ok){
-      throw new Error(data?.error || `HTTP ${res.status}`);
-    }
+if(!res.ok){
+throw new Error(data?.error || `HTTP ${res.status}`);
+}
 
-    return data;
-
-  }catch(err){
-
-    if(err.name==="AbortError"){
-      throw new Error("通信がタイムアウトしました");
-    }
-
-    throw err;
-
-  }
+return data;
 
 }
 
@@ -107,20 +103,20 @@ async function postJson(path, body){
 
 function toast(message,type="success"){
 
-  let el=document.querySelector(".toast");
+let el=document.querySelector(".toast");
 
-  if(!el){
-    el=document.createElement("div");
-    el.className="toast";
-    document.body.appendChild(el);
-  }
+if(!el){
+el=document.createElement("div");
+el.className="toast";
+document.body.appendChild(el);
+}
 
-  el.textContent=message;
-  el.className=`toast show ${type}`;
+el.textContent=message;
+el.className=`toast show ${type}`;
 
-  setTimeout(()=>{
-    el.classList.remove("show");
-  },3000);
+setTimeout(()=>{
+el.classList.remove("show");
+},3000);
 
 }
 
@@ -136,23 +132,23 @@ const panelBulk=$("panelBulk");
 
 function setTab(which){
 
-  if(which==="short"){
+if(which==="short"){
 
-    tabShort?.classList.add("tab-active");
-    tabBulk?.classList.remove("tab-active");
+tabShort?.classList.add("tab-active");
+tabBulk?.classList.remove("tab-active");
 
-    panelShort?.classList.remove("hidden");
-    panelBulk?.classList.add("hidden");
+panelShort?.classList.remove("hidden");
+panelBulk?.classList.add("hidden");
 
-  }else{
+}else{
 
-    tabBulk?.classList.add("tab-active");
-    tabShort?.classList.remove("tab-active");
+tabBulk?.classList.add("tab-active");
+tabShort?.classList.remove("tab-active");
 
-    panelBulk?.classList.remove("hidden");
-    panelShort?.classList.add("hidden");
+panelBulk?.classList.remove("hidden");
+panelShort?.classList.add("hidden");
 
-  }
+}
 
 }
 
@@ -160,21 +156,42 @@ safeAddEvent("tabShort","click",()=>setTab("short"));
 safeAddEvent("tabBulk","click",()=>setTab("bulk"));
 
 /* =========================
+例文挿入
+========================= */
+
+document.body.addEventListener("click",(e)=>{
+
+const btn=e.target.closest("[data-example]");
+if(!btn) return;
+
+const key=btn.dataset.example;
+
+if(key.startsWith("short")){
+$("shortInput").value=examples[key];
+setTab("short");
+}else{
+$("bulkInput").value=examples[key];
+setTab("bulk");
+}
+
+});
+
+/* =========================
 コピー
 ========================= */
 
 async function copyToClipboard(text,message){
 
-  try{
+try{
 
-    await navigator.clipboard.writeText(text);
-    toast(message);
+await navigator.clipboard.writeText(text);
+toast(message);
 
-  }catch{
+}catch{
 
-    toast("コピーに失敗しました","error");
+toast("コピーに失敗しました","error");
 
-  }
+}
 
 }
 
@@ -182,158 +199,178 @@ async function copyToClipboard(text,message){
 短文チェック
 ========================= */
 
-safeAddEvent("btnCheckShort","click", async ()=>{
+safeAddEvent("btnCheckShort","click",async ()=>{
 
-  const text=$("shortInput").value.trim();
+const text=$("shortInput").value.trim();
 
-  if(!text){
-    return toast("文を入力してください","error");
-  }
+if(!text){
+return toast("文を入力してください","error");
+}
 
-  const btn=$("btnCheckShort");
+const btn=$("btnCheckShort");
 
-  btn.disabled=true;
-  btn.innerHTML="チェック中...";
+btn.disabled=true;
+btn.innerHTML="チェック中...";
 
-  try{
+try{
 
-    const industry=$("industrySelect")?.value ?? "general";
+const industry=$("industrySelect")?.value ?? "general";
 
-    const data=await postJson("/api/check",{text,industry});
+const data=await postJson("/api/check",{text,industry});
 
-    renderShortResult(data);
+renderShortResult(data);
 
-  }catch(err){
+}catch(err){
 
-    renderShortResult({error:err.message});
+renderShortResult({error:err.message});
 
-  }finally{
+}finally{
 
-    btn.disabled=false;
-    btn.innerHTML="チェックする";
+btn.disabled=false;
+btn.innerHTML="チェックする";
 
-  }
+}
 
 });
 
 function renderShortResult(data){
 
-  const box=$("shortResult");
+const box=$("shortResult");
 
-  safeShow("shortResult");
+safeShow("shortResult");
 
-  if(data.error){
+if(data.error){
 
-    box.innerHTML=`
-    <div class="result-card">
-      <div class="result-title text-rose-300">エラー</div>
-      <div>${escapeHtml(data.error)}</div>
-    </div>
-    `;
+box.innerHTML=`
+<div class="result-card">
+<div class="result-title text-rose-300">エラー</div>
+<div>${escapeHtml(data.error)}</div>
+</div>`;
 
-    return;
+return;
 
-  }
+}
 
-  const suggestions=data.suggestions||[];
+const suggestions=data.suggestions||[];
+const suggestion=suggestions[0]||"";
 
-  const suggestion=suggestions[0]||"";
+const copyBtn=$("btnCopyShortSuggestion");
 
-  const copyBtn=$("btnCopyShortSuggestion");
+if(copyBtn){
 
-  if(copyBtn){
+copyBtn.disabled=!suggestion;
 
-    copyBtn.disabled=!suggestion;
+copyBtn.onclick=()=>{
+copyToClipboard(suggestion,"修正文をコピーしました");
+};
 
-    copyBtn.onclick=()=>{
-      copyToClipboard(suggestion,"修正文をコピーしました");
-    };
+}
 
-  }
+/* スコア */
 
-  box.innerHTML=`
+let score=0;
 
-  <div class="result-card">
+if(data.label==="誤用/不適切") score+=3;
+if(data.label==="謙譲語") score+=1;
 
-  <div class="font-semibold">理由</div>
-  <div>${escapeHtml(data.reason || "")}</div>
+score+=suggestions.length;
 
-  <div class="mt-3 font-semibold">修正案</div>
+let summary="";
 
-  ${
-    suggestions.length
-    ? `<ul class="list-disc pl-5">
-        ${suggestions.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-       </ul>`
-    : `<div>修正案はありません</div>`
-  }
+if(score===0){
+summary=`<div class="summary summary-good">🏆 完全に自然な文章です</div>`;
+}else if(score<=2){
+summary=`<div class="summary summary-good">✅ ほぼ問題ありません</div>`;
+}else if(score<=4){
+summary=`<div class="summary summary-warning">⚠ 修正をおすすめします</div>`;
+}else{
+summary=`<div class="summary summary-bad">❌ 明確な誤用があります</div>`;
+}
 
-  </div>
+box.innerHTML=`
 
-  `;
+${summary}
+
+<div class="result-card">
+
+<div class="font-semibold">理由</div>
+<div>${escapeHtml(data.reason||"")}</div>
+
+<div class="mt-3 font-semibold">修正案</div>
+
+${
+suggestions.length
+? `<ul class="list-disc pl-5">
+${suggestions.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
+</ul>`
+: `<div>修正案はありません</div>`
+}
+
+</div>
+`;
 
 }
 
 /* =========================
-一括チェック
+長文チェック
 ========================= */
 
-safeAddEvent("btnCheckBulk","click", async ()=>{
+safeAddEvent("btnCheckBulk","click",async ()=>{
 
-  const text=$("bulkInput").value.trim();
+const text=$("bulkInput").value.trim();
 
-  if(!text){
-    return toast("本文を入力してください","error");
-  }
+if(!text){
+return toast("本文を入力してください","error");
+}
 
-  const btn=$("btnCheckBulk");
+const btn=$("btnCheckBulk");
 
-  btn.disabled=true;
-  btn.innerHTML="チェック中...";
+btn.disabled=true;
+btn.innerHTML="チェック中...";
 
-  try{
+try{
 
-    const industry=$("industrySelect")?.value ?? "general";
+const industry=$("industrySelect")?.value ?? "general";
 
-    const data=await postJson("/api/bulk",{text,industry});
+const data=await postJson("/api/bulk",{text,industry});
 
-    renderBulkResult(data);
+renderBulkResult(data);
 
-  }catch(err){
+}catch(err){
 
-    toast(err.message || "エラー","error");
+toast(err.message || "エラー","error");
 
-  }finally{
+}finally{
 
-    btn.disabled=false;
-    btn.innerHTML="一括チェック";
+btn.disabled=false;
+btn.innerHTML="一括チェック";
 
-  }
+}
 
 });
 
 function renderBulkResult(data){
 
-  const issues=data.issues||[];
+const issues=data.issues||[];
 
-  $("bulkIssues").innerHTML=issues.map(issue=>`
-  <div class="issue">
-  <div class="type">${escapeHtml(issue.type)}</div>
-  <div class="msg">${escapeHtml(issue.message)}</div>
-  <div class="sug">${escapeHtml(issue.suggestion||"")}</div>
-  </div>
-  `).join("");
+$("bulkIssues").innerHTML=issues.map(issue=>`
+<div class="issue">
+<div class="type">${escapeHtml(issue.type)}</div>
+<div class="msg">${escapeHtml(issue.message)}</div>
+<div class="sug">${escapeHtml(issue.suggestion||"")}</div>
+</div>
+`).join("");
 
-  const corrected=data.corrected||"";
+const corrected=data.corrected||"";
 
-  $("bulkCorrected").textContent=corrected;
+$("bulkCorrected").textContent=corrected;
 
-  const btn=$("btnCopyBulkCorrected");
+const btn=$("btnCopyBulkCorrected");
 
-  btn.disabled=!corrected;
+btn.disabled=!corrected;
 
-  btn.onclick=()=>{
-    copyToClipboard(corrected,"修正版コピーしました");
-  };
+btn.onclick=()=>{
+copyToClipboard(corrected,"修正版コピーしました");
+};
 
 }
