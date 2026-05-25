@@ -2,98 +2,147 @@
 設定
 ========================= */
 
-const API_ENDPOINT="https://honorificchecker.gmo-k-watanabe.workers.dev";
-const $=(id)=>document.getElementById(id);
+const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
+
+const $ = (id) => document.getElementById(id);
 
 /* =========================
 例文
 ========================= */
 
-const examples={
-"short-1":"私が御社に伺わせていただきます。",
-"short-2":"社長にお伝えしてもらえますでしょうか。",
-"short-3":"資料を送付いたします。ご確認ください。",
-"bulk-1":`お世話になっております。株式会社サンプルの田中です。
+const examples = {
+
+  "short-1": "私が御社に伺わせていただきます。",
+
+  "short-2": "社長にお伝えしてもらえますでしょうか。",
+
+  "short-3": "資料を送付いたします。ご確認ください。",
+
+  "bulk-1":
+`お世話になっております。株式会社サンプルの田中です。
 この度はご迷惑をお掛けしてしまい大変申し訳ございません。
 本日中にご連絡差し上げますので、何卒よろしくお願い致します。`,
-"bulk-2":`お世話になっております。株式会社サンプルの田中です。
+
+  "bulk-2":
+`お世話になっております。株式会社サンプルの田中です。
 来週の打ち合わせ日程について、ご都合の良い候補日を3つほど頂けますでしょうか。
 よろしくお願い申し上げます。`
+
 };
 
 /* =========================
 安全DOM
 ========================= */
 
-function safeAddEvent(id,event,handler){
-const el=$(id);
-if(el) el.addEventListener(event,handler);
+function safeAddEvent(id, event, handler) {
+
+  const el = $(id);
+
+  if (el) {
+    el.addEventListener(event, handler);
+  }
+
 }
 
-function safeShow(id){
-const el=$(id);
-if(el) el.classList.remove("hidden");
+function safeShow(id) {
+
+  const el = $(id);
+
+  if (el) {
+    el.classList.remove("hidden");
+  }
+
 }
 
-function safeHide(id){
-const el=$(id);
-if(el) el.classList.add("hidden");
+function safeHide(id) {
+
+  const el = $(id);
+
+  if (el) {
+    el.classList.add("hidden");
+  }
+
 }
 
-function escapeHtml(str){
-return String(str)
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
+function escapeHtml(str) {
+
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
 }
 
 /* =========================
 通信
 ========================= */
 
-async function fetchWithTimeout(url,options={},timeout=20000){
+async function fetchWithTimeout(url, options = {}, timeout = 25000) {
 
-const controller=new AbortController();
-const id=setTimeout(()=>controller.abort(),timeout);
+  const controller = new AbortController();
 
-try{
+  const id = setTimeout(() => {
+    controller.abort();
+  }, timeout);
 
-const res=await fetch(url,{...options,signal:controller.signal});
-clearTimeout(id);
-return res;
+  try {
 
-}catch(err){
+    const res = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
 
-clearTimeout(id);
-throw err;
+    clearTimeout(id);
+
+    return res;
+
+  } catch (err) {
+
+    clearTimeout(id);
+
+    throw err;
+
+  }
 
 }
 
-}
+async function postJson(path, body) {
 
-async function postJson(path,body){
+  const res = await fetchWithTimeout(
+    `${API_ENDPOINT}${path}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    }
+  );
 
-const res=await fetchWithTimeout(`${API_ENDPOINT}${path}`,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(body)
-});
+  let data;
 
-let data;
+  try {
 
-try{
-data=await res.json();
-}catch{
-throw new Error("サーバー応答がJSONではありません");
-}
+    data = await res.json();
 
-if(!res.ok){
-throw new Error(data?.error||`HTTP ${res.status}`);
-}
+  } catch {
 
-return data;
+    throw new Error("サーバー応答がJSON形式ではありません");
+
+  }
+
+  if (!res.ok) {
+
+    throw new Error(
+      data?.error ||
+      `HTTP ${res.status}`
+    );
+
+  }
+
+  return data;
 
 }
 
@@ -101,22 +150,29 @@ return data;
 トースト
 ========================= */
 
-function toast(message,type="success"){
+function toast(message, type = "success") {
 
-let el=document.querySelector(".toast");
+  let el = document.querySelector(".toast");
 
-if(!el){
-el=document.createElement("div");
-el.className="toast";
-document.body.appendChild(el);
-}
+  if (!el) {
 
-el.textContent=message;
-el.className=`toast show ${type}`;
+    el = document.createElement("div");
 
-setTimeout(()=>{
-el.classList.remove("show");
-},3000);
+    el.className = "toast";
+
+    document.body.appendChild(el);
+
+  }
+
+  el.textContent = message;
+
+  el.className = `toast show ${type}`;
+
+  setTimeout(() => {
+
+    el.classList.remove("show");
+
+  }, 3000);
 
 }
 
@@ -124,55 +180,105 @@ el.classList.remove("show");
 タブ
 ========================= */
 
-const tabShort=$("tabShort");
-const tabBulk=$("tabBulk");
+const tabShort = $("tabShort");
+const tabBulk = $("tabBulk");
 
-const panelShort=$("panelShort");
-const panelBulk=$("panelBulk");
+const panelShort = $("panelShort");
+const panelBulk = $("panelBulk");
 
-function setTab(which){
+function setTab(which) {
 
-if(which==="short"){
+  if (which === "short") {
 
-tabShort?.classList.add("tab-active");
-tabBulk?.classList.remove("tab-active");
+    tabShort?.classList.add("tab-active");
+    tabBulk?.classList.remove("tab-active");
 
-panelShort?.classList.remove("hidden");
-panelBulk?.classList.add("hidden");
+    panelShort?.classList.remove("hidden");
+    panelBulk?.classList.add("hidden");
 
-}else{
+  } else {
 
-tabBulk?.classList.add("tab-active");
-tabShort?.classList.remove("tab-active");
+    tabBulk?.classList.add("tab-active");
+    tabShort?.classList.remove("tab-active");
 
-panelBulk?.classList.remove("hidden");
-panelShort?.classList.add("hidden");
+    panelBulk?.classList.remove("hidden");
+    panelShort?.classList.add("hidden");
+
+  }
 
 }
 
-}
+safeAddEvent("tabShort", "click", () => {
+  setTab("short");
+});
 
-safeAddEvent("tabShort","click",()=>setTab("short"));
-safeAddEvent("tabBulk","click",()=>setTab("bulk"));
+safeAddEvent("tabBulk", "click", () => {
+  setTab("bulk");
+});
 
 /* =========================
-例文
+例文挿入
 ========================= */
 
-document.body.addEventListener("click",(e)=>{
+document.body.addEventListener("click", (e) => {
 
-const btn=e.target.closest("[data-example]");
-if(!btn) return;
+  const btn = e.target.closest("[data-example]");
 
-const key=btn.dataset.example;
+  if (!btn) return;
 
-if(key.startsWith("short")){
-$("shortInput").value=examples[key];
-setTab("short");
-}else{
-$("bulkInput").value=examples[key];
-setTab("bulk");
-}
+  const key = btn.dataset.example;
+
+  if (!examples[key]) return;
+
+  if (key.startsWith("short")) {
+
+    $("shortInput").value = examples[key];
+
+    setTab("short");
+
+  } else {
+
+    $("bulkInput").value = examples[key];
+
+    setTab("bulk");
+
+  }
+
+});
+
+/* =========================
+クリア
+========================= */
+
+safeAddEvent("btnClearShort", "click", () => {
+
+  $("shortInput").value = "";
+
+  safeHide("shortResult");
+
+  const btn = $("btnCopyShortSuggestion");
+
+  if (btn) {
+    btn.disabled = true;
+  }
+
+});
+
+safeAddEvent("btnClearBulk", "click", () => {
+
+  $("bulkInput").value = "";
+
+  $("bulkIssues").innerHTML = "";
+
+  $("bulkCorrected").textContent = "";
+
+  $("bulkSummary").innerHTML = "";
+
+  const btn = $("btnCopyBulkCorrected");
+
+  if (btn) {
+    btn.disabled = true;
+  }
 
 });
 
@@ -180,18 +286,108 @@ setTab("bulk");
 コピー
 ========================= */
 
-async function copyToClipboard(text,message){
+async function copyToClipboard(text, message) {
 
-try{
+  try {
 
-await navigator.clipboard.writeText(text);
-toast(message);
+    await navigator.clipboard.writeText(text);
 
-}catch{
+    toast(message);
 
-toast("コピーに失敗しました","error");
+  } catch {
+
+    toast("コピーに失敗しました", "error");
+
+  }
 
 }
+
+/* =========================
+ローディング
+========================= */
+
+function setLoading(buttonId, loadingText) {
+
+  const btn = $(buttonId);
+
+  if (!btn) return;
+
+  btn.disabled = true;
+
+  btn.innerHTML = `
+    <span class="spinner"></span>
+    ${loadingText}
+  `;
+
+}
+
+function resetLoading(buttonId, defaultText) {
+
+  const btn = $(buttonId);
+
+  if (!btn) return;
+
+  btn.disabled = false;
+
+  btn.innerHTML = defaultText;
+
+}
+
+/* =========================
+スコアUI
+========================= */
+
+function renderSummary(score) {
+
+  if (score >= 90) {
+
+    return `
+      <div class="summary summary-good">
+        🏆 非常に自然なビジネス敬語です（${score}点）
+      </div>
+    `;
+
+  }
+
+  if (score >= 70) {
+
+    return `
+      <div class="summary summary-warning">
+        ⚠ 一部修正をおすすめします（${score}点）
+      </div>
+    `;
+
+  }
+
+  return `
+    <div class="summary summary-bad">
+      ❌ 明確な敬語誤用があります（${score}点）
+    </div>
+  `;
+
+}
+
+/* =========================
+Issue UI
+========================= */
+
+function issueTypeLabel(type) {
+
+  switch(type) {
+
+    case "keigo":
+      return "敬語";
+
+    case "grammar":
+      return "文法";
+
+    case "typo":
+      return "誤字";
+
+    default:
+      return "指摘";
+
+  }
 
 }
 
@@ -199,109 +395,206 @@ toast("コピーに失敗しました","error");
 短文チェック
 ========================= */
 
-safeAddEvent("btnCheckShort","click",async()=>{
+safeAddEvent("btnCheckShort", "click", async () => {
 
-const text=$("shortInput").value.trim();
+  const text = $("shortInput").value.trim();
 
-if(!text){
-return toast("文を入力してください","error");
-}
+  if (!text) {
 
-const btn=$("btnCheckShort");
+    toast("文を入力してください", "error");
 
-btn.disabled=true;
-btn.innerHTML="チェック中...";
+    return;
 
-try{
+  }
 
-const industry=$("industrySelect")?.value??"general";
+  setLoading("btnCheckShort", "チェック中...");
 
-const data=await postJson("/api/check",{text,industry});
+  try {
 
-renderShortResult(data);
+    const industry =
+      $("industrySelect")?.value || "general";
 
-}catch(err){
+    const data = await postJson("/api/check", {
+      text,
+      industry
+    });
 
-renderShortResult({error:err.message});
+    renderShortResult(data);
 
-}finally{
+  } catch (err) {
 
-btn.disabled=false;
-btn.innerHTML="チェックする";
+    renderShortResult({
+      error: err.message
+    });
 
-}
+  } finally {
+
+    resetLoading(
+      "btnCheckShort",
+      `<i class="fa-solid fa-magnifying-glass mr-2"></i>チェックする`
+    );
+
+  }
 
 });
 
-function renderShortResult(data){
+function renderShortResult(data) {
 
-const box=$("shortResult");
+  const box = $("shortResult");
 
-safeShow("shortResult");
+  safeShow("shortResult");
 
-if(data.error){
+  if (data.error) {
 
-box.innerHTML=`
-<div class="result-card">
-<div class="result-title text-rose-300">エラー</div>
-<div>${escapeHtml(data.error)}</div>
-</div>`;
+    box.innerHTML = `
+      <div class="result-card">
+        <div class="result-title text-rose-300">
+          エラー
+        </div>
 
-return;
+        <div class="mt-2">
+          ${escapeHtml(data.error)}
+        </div>
+      </div>
+    `;
 
-}
+    return;
 
-const suggestions=data.ai?.suggestions||[];
-const suggestion=suggestions[0]||"";
+  }
 
-const copyBtn=$("btnCopyShortSuggestion");
+  /* 修正済み：
+     data.ai?.suggestions → data.suggestions
+  */
 
-if(copyBtn){
+  const suggestions =
+    Array.isArray(data.suggestions)
+      ? data.suggestions
+      : [];
 
-copyBtn.disabled=!suggestion;
+  const reason =
+    data.ai_reason ||
+    "敬語表現を確認しました。";
 
-copyBtn.onclick=()=>{
-copyToClipboard(suggestion,"修正文をコピーしました");
-};
+  const issues =
+    Array.isArray(data.issues)
+      ? data.issues
+      : [];
 
-}
+  const score =
+    typeof data.score === "number"
+      ? data.score
+      : 100;
 
-let score=0;
+  const firstSuggestion =
+    suggestions[0] || "";
 
-score += suggestions.length;
-score += data.rules?.length || 0;
+  const copyBtn =
+    $("btnCopyShortSuggestion");
 
-let summary="";
+  if (copyBtn) {
 
-if(score===0){
-summary=`<div class="summary summary-good">🏆 完全に自然な文章です</div>`;
-}else if(score<=2){
-summary=`<div class="summary summary-warning">⚠ 修正をおすすめします</div>`;
-}else{
-summary=`<div class="summary summary-bad">❌ 明確な誤用があります</div>`;
-}
+    copyBtn.disabled = !firstSuggestion;
 
-box.innerHTML=`
+    copyBtn.onclick = () => {
 
-${summary}
+      copyToClipboard(
+        firstSuggestion,
+        "修正文をコピーしました"
+      );
 
-<div class="result-card">
+    };
 
-<div class="font-semibold">理由</div>
-<div>${escapeHtml(data.ai?.reason||"")}</div>
+  }
 
-<div class="mt-3 font-semibold">修正案</div>
+  box.innerHTML = `
 
-${
-suggestions.length
-? `<ul class="list-disc pl-5">
-${suggestions.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
-</ul>`
-: `<div>修正案はありません</div>`
-}
+    ${renderSummary(score)}
 
-</div>
-`;
+    <div class="result-card">
+
+      <div class="font-semibold">
+        AI分析
+      </div>
+
+      <div class="mt-2 leading-7">
+        ${escapeHtml(reason)}
+      </div>
+
+      ${
+        issues.length
+        ?
+        `
+        <div class="mt-5 font-semibold">
+          検出された問題
+        </div>
+
+        <div class="mt-3 space-y-2">
+
+          ${issues.map(issue => `
+
+            <div class="issue">
+
+              <div class="type">
+                ${escapeHtml(issueTypeLabel(issue.type))}
+              </div>
+
+              <div class="msg">
+                ${escapeHtml(issue.message)}
+              </div>
+
+              ${
+                issue.suggestion
+                ?
+                `
+                <div class="sug">
+                  修正例：
+                  <code>
+                    ${escapeHtml(issue.suggestion)}
+                  </code>
+                </div>
+                `
+                :
+                ""
+              }
+
+            </div>
+
+          `).join("")}
+
+        </div>
+        `
+        :
+        ""
+      }
+
+      <div class="mt-5 font-semibold">
+        AI修正文提案
+      </div>
+
+      ${
+        suggestions.length
+        ?
+        `
+        <ul class="list-disc pl-5 mt-2 space-y-2">
+
+          ${suggestions.map(s => `
+            <li>
+              ${escapeHtml(s)}
+            </li>
+          `).join("")}
+
+        </ul>
+        `
+        :
+        `
+        <div class="mt-2 muted">
+          修正文提案はありません
+        </div>
+        `
+      }
+
+    </div>
+  `;
 
 }
 
@@ -309,62 +602,172 @@ ${suggestions.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}
 長文チェック
 ========================= */
 
-safeAddEvent("btnCheckBulk","click",async()=>{
+safeAddEvent("btnCheckBulk", "click", async () => {
 
-const text=$("bulkInput").value.trim();
+  const text = $("bulkInput").value.trim();
 
-if(!text){
-return toast("本文を入力してください","error");
-}
+  if (!text) {
 
-const btn=$("btnCheckBulk");
+    toast("本文を入力してください", "error");
 
-btn.disabled=true;
-btn.innerHTML="チェック中...";
+    return;
 
-try{
+  }
 
-const industry=$("industrySelect")?.value??"general";
+  setLoading("btnCheckBulk", "チェック中...");
 
-const data=await postJson("/api/bulk",{text,industry});
+  try {
 
-renderBulkResult(data);
+    const industry =
+      $("industrySelect")?.value || "general";
 
-}catch(err){
+    const data = await postJson("/api/bulk", {
+      text,
+      industry
+    });
 
-toast(err.message||"エラー","error");
+    renderBulkResult(data);
 
-}finally{
+  } catch (err) {
 
-btn.disabled=false;
-btn.innerHTML="一括チェック";
+    toast(
+      err.message || "エラー",
+      "error"
+    );
 
-}
+  } finally {
+
+    resetLoading(
+      "btnCheckBulk",
+      `<i class="fa-solid fa-highlighter mr-2"></i>一括チェック`
+    );
+
+  }
 
 });
 
-function renderBulkResult(data){
+function renderBulkResult(data) {
 
-const issues=data.issues||[];
+  const issues =
+    Array.isArray(data.issues)
+      ? data.issues
+      : [];
 
-$("bulkIssues").innerHTML=issues.map(issue=>`
-<div class="issue">
-<div class="type">${escapeHtml(issue.type)}</div>
-<div class="msg">${escapeHtml(issue.message)}</div>
-<div class="sug">${escapeHtml(issue.suggestion||"")}</div>
-</div>
-`).join("");
+  const corrected =
+    data.corrected || "";
 
-const corrected=data.corrected||"";
+  const score =
+    typeof data.score === "number"
+      ? data.score
+      : 100;
 
-$("bulkCorrected").textContent=corrected;
+  const aiReason =
+    data.ai_reason || "";
 
-const btn=$("btnCopyBulkCorrected");
+  $("bulkSummary").innerHTML = `
+    ${renderSummary(score)}
 
-btn.disabled=!corrected;
+    ${
+      aiReason
+      ?
+      `
+      <div class="hint">
+        ${escapeHtml(aiReason)}
+      </div>
+      `
+      :
+      ""
+    }
+  `;
 
-btn.onclick=()=>{
-copyToClipboard(corrected,"修正版コピーしました");
-};
+  $("bulkIssues").innerHTML =
+
+    issues.length
+
+    ?
+
+    issues.map(issue => `
+
+      <div class="issue">
+
+        <div class="type">
+          ${escapeHtml(issueTypeLabel(issue.type))}
+        </div>
+
+        <div class="msg">
+          ${escapeHtml(issue.message)}
+        </div>
+
+        ${
+          issue.suggestion
+          ?
+          `
+          <div class="sug">
+            修正例：
+            <code>
+              ${escapeHtml(issue.suggestion)}
+            </code>
+          </div>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+    `).join("")
+
+    :
+
+    `
+    <div class="hint">
+      問題は検出されませんでした。
+    </div>
+    `;
+
+  $("bulkCorrected").textContent =
+    corrected;
+
+  const copyBtn =
+    $("btnCopyBulkCorrected");
+
+  if (copyBtn) {
+
+    copyBtn.disabled = !corrected;
+
+    copyBtn.onclick = () => {
+
+      copyToClipboard(
+        corrected,
+        "修正版をコピーしました"
+      );
+
+    };
+
+  }
 
 }
+
+/* =========================
+モーダル
+========================= */
+
+document.body.addEventListener("click", (e) => {
+
+  const close = e.target.closest("[data-close]");
+
+  if (!close) return;
+
+  safeHide("helpModal");
+
+});
+
+/* =========================
+初期化
+========================= */
+
+(function init() {
+
+  setTab("short");
+
+})(); 
