@@ -1,7 +1,3 @@
-/* =========================
-設定
-========================= */
-
 const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
 
 const $ = (id) => document.getElementById(id);
@@ -147,6 +143,84 @@ async function postJson(path, body) {
 }
 
 /* =========================
+個人情報・企業情報 検知（クライアント側・無料・通信不要）
+========================= */
+
+function clientDetectSensitive(text) {
+
+  const checks = [
+    { re: /0\d{1,4}[-(\s]?\d{1,4}[-)\s]?\d{3,4}/, label: "電話番号" },
+    { re: /[\w.+-]+@[\w-]+\.[\w.-]+/, label: "メールアドレス" },
+    { re: /〒?\s?\d{3}-\d{4}/, label: "郵便番号・住所" },
+    { re: /(東京都|北海道|(?:京都|大阪)府|.{2,3}県)[^\s、。]{2,}(市|区|町|村)/, label: "住所" },
+    { re: /\d{4}\s?\d{4}\s?\d{4}\s?\d{4}/, label: "カード番号らしき数字" },
+    { re: /(マイナンバー|個人番号)/, label: "マイナンバーらしき情報" },
+    { re: /(株式会社|有限会社|合同会社|\(株\)|（株）)/, label: "企業名らしき情報" },
+    { re: /[一-龥]{1,4}(様|さん|氏)(?![方々])/, label: "個人名らしき情報" }
+  ];
+
+  const labels = [];
+
+  for (const c of checks) {
+    if (c.re.test(text)) {
+      if (!labels.includes(c.label)) {
+        labels.push(c.label);
+      }
+    }
+  }
+
+  return labels;
+}
+
+function renderSensitiveAlert(targetId, labels) {
+
+  const el = $(targetId);
+
+  if (!el) return;
+
+  if (!labels || !labels.length) {
+    el.classList.add("hidden");
+    el.innerHTML = "";
+    return;
+  }
+
+  el.classList.remove("hidden");
+
+  el.innerHTML = `
+    <div class="sensitive-inner">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div>
+        <div class="sensitive-title">個人情報・企業情報の可能性があります</div>
+        <div class="sensitive-body">
+          次の項目が含まれている可能性があります：
+          <strong>${labels.map(escapeHtml).join(" / ")}</strong><br />
+          送信・共有の前に削除またはマスキングをご検討ください。
+        </div>
+      </div>
+    </div>
+  `;
+
+}
+
+/* 入力中のリアルタイム検知 */
+
+function attachSensitiveWatcher(inputId, alertId) {
+
+  const input = $(inputId);
+
+  if (!input) return;
+
+  input.addEventListener("input", () => {
+
+    const labels = clientDetectSensitive(input.value);
+
+    renderSensitiveAlert(alertId, labels);
+
+  });
+
+}
+
+/* =========================
 トースト
 ========================= */
 
@@ -234,11 +308,21 @@ document.body.addEventListener("click", (e) => {
 
     $("shortInput").value = examples[key];
 
+    renderSensitiveAlert(
+      "shortSensitive",
+      clientDetectSensitive(examples[key])
+    );
+
     setTab("short");
 
   } else {
 
     $("bulkInput").value = examples[key];
+
+    renderSensitiveAlert(
+      "bulkSensitive",
+      clientDetectSensitive(examples[key])
+    );
 
     setTab("bulk");
 
@@ -255,6 +339,8 @@ safeAddEvent("btnClearShort", "click", () => {
   $("shortInput").value = "";
 
   safeHide("shortResult");
+
+  renderSensitiveAlert("shortSensitive", []);
 
   const btn = $("btnCopyShortSuggestion");
 
@@ -273,6 +359,8 @@ safeAddEvent("btnClearBulk", "click", () => {
   $("bulkCorrected").textContent = "";
 
   $("bulkSummary").innerHTML = "";
+
+  renderSensitiveAlert("bulkSensitive", []);
 
   const btn = $("btnCopyBulkCorrected");
 
@@ -384,9 +472,29 @@ function issueTypeLabel(type) {
     case "typo":
       return "誤字";
 
+    case "direction":
+      return "敬語";
+
     default:
       return "指摘";
 
+  }
+
+}
+
+/* =========================
+サーバー側 sensitive 結果表示
+========================= */
+
+function renderServerSensitive(targetId, sensitive, notice) {
+
+  const labels =
+    Array.isArray(sensitive)
+      ? sensitive.map(s => s.label)
+      : [];
+
+  if (labels.length) {
+    renderSensitiveAlert(targetId, labels);
   }
 
 }
@@ -418,6 +526,12 @@ safeAddEvent("btnCheckShort", "click", async () => {
       text,
       industry
     });
+
+    renderServerSensitive(
+      "shortSensitive",
+      data.sensitive,
+      data.sensitive_notice
+    );
 
     renderShortResult(data);
 
@@ -626,6 +740,12 @@ safeAddEvent("btnCheckBulk", "click", async () => {
       industry
     });
 
+    renderServerSensitive(
+      "bulkSensitive",
+      data.sensitive,
+      data.sensitive_notice
+    );
+
     renderBulkResult(data);
 
   } catch (err) {
@@ -725,8 +845,20 @@ function renderBulkResult(data) {
     </div>
     `;
 
+  const issueCountEl = $("issueCount");
+
+  if (issueCountEl) {
+    issueCountEl.textContent = `${issues.length}件`;
+  }
+
   $("bulkCorrected").textContent =
     corrected;
+
+  const aiReasonEl = $("bulkAiReason");
+
+  if (aiReasonEl) {
+    aiReasonEl.textContent = aiReason;
+  }
 
   const copyBtn =
     $("btnCopyBulkCorrected");
@@ -745,6 +877,41 @@ function renderBulkResult(data) {
     };
 
   }
+
+  const copyBtnTop =
+    $("btnCopyBulkCorrectedTop");
+
+  if (copyBtnTop) {
+
+    copyBtnTop.disabled = !corrected;
+
+    copyBtnTop.onclick = () => {
+
+      copyToClipboard(
+        corrected,
+        "修正版をコピーしました"
+      );
+
+    };
+
+  }
+
+}
+
+/* =========================
+文字数カウント
+========================= */
+
+function attachCounter(inputId, countId) {
+
+  const input = $(inputId);
+  const count = $(countId);
+
+  if (!input || !count) return;
+
+  input.addEventListener("input", () => {
+    count.textContent = input.value.length;
+  });
 
 }
 
@@ -770,4 +937,10 @@ document.body.addEventListener("click", (e) => {
 
   setTab("short");
 
-})(); 
+  attachCounter("shortInput", "shortCount");
+  attachCounter("bulkInput", "bulkCount");
+
+  attachSensitiveWatcher("shortInput", "shortSensitive");
+  attachSensitiveWatcher("bulkInput", "bulkSensitive");
+
+})();
