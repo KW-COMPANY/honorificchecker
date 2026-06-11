@@ -251,6 +251,93 @@ function toast(message, type = "success") {
 }
 
 /* =========================
+クリップボード（フォールバック付き・修正の核心）
+navigator.clipboard が使えない環境でも動くよう旧方式を併用
+========================= */
+
+function legacyCopy(text) {
+
+  try {
+
+    const textarea = document.createElement("textarea");
+
+    textarea.value = text;
+
+    /* 画面外に配置してスクロールを動かさない */
+    textarea.style.position = "fixed";
+    textarea.style.top = "-9999px";
+    textarea.style.left = "-9999px";
+    textarea.setAttribute("readonly", "");
+
+    document.body.appendChild(textarea);
+
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    const ok = document.execCommand("copy");
+
+    document.body.removeChild(textarea);
+
+    return ok;
+
+  } catch {
+
+    return false;
+
+  }
+
+}
+
+async function copyToClipboard(text, message) {
+
+  const value = String(text || "");
+
+  if (!value.trim()) {
+
+    toast("コピーする内容がありません", "error");
+
+    return;
+
+  }
+
+  /* まず標準APIを試す */
+  if (
+    navigator.clipboard &&
+    typeof navigator.clipboard.writeText === "function" &&
+    window.isSecureContext
+  ) {
+
+    try {
+
+      await navigator.clipboard.writeText(value);
+
+      toast(message);
+
+      return;
+
+    } catch {
+
+      /* 失敗したら旧方式へフォールバック */
+
+    }
+
+  }
+
+  /* 旧方式でのコピー */
+  if (legacyCopy(value)) {
+
+    toast(message);
+
+  } else {
+
+    toast("コピーに失敗しました", "error");
+
+  }
+
+}
+
+/* =========================
 タブ
 ========================= */
 
@@ -360,6 +447,12 @@ safeAddEvent("btnClearBulk", "click", () => {
 
   $("bulkSummary").innerHTML = "";
 
+  const aiReasonEl = $("bulkAiReason");
+
+  if (aiReasonEl) {
+    aiReasonEl.textContent = "";
+  }
+
   renderSensitiveAlert("bulkSensitive", []);
 
   const btn = $("btnCopyBulkCorrected");
@@ -368,27 +461,13 @@ safeAddEvent("btnClearBulk", "click", () => {
     btn.disabled = true;
   }
 
-});
+  const btnTop = $("btnCopyBulkCorrectedTop");
 
-/* =========================
-コピー
-========================= */
-
-async function copyToClipboard(text, message) {
-
-  try {
-
-    await navigator.clipboard.writeText(text);
-
-    toast(message);
-
-  } catch {
-
-    toast("コピーに失敗しました", "error");
-
+  if (btnTop) {
+    btnTop.disabled = true;
   }
 
-}
+});
 
 /* =========================
 ローディング
@@ -766,6 +845,53 @@ safeAddEvent("btnCheckBulk", "click", async () => {
 
 });
 
+/* =========================
+修正版コピーボタンの一元設定（修正の核心）
+表示中の修正版テキストを直接コピー対象にする
+========================= */
+
+function setupBulkCopyButtons() {
+
+  /* 画面に実際に表示されている修正版テキストを取得する関数 */
+  const getCorrectedText = () => {
+
+    const el = $("bulkCorrected");
+
+    if (!el) return "";
+
+    /* textContent で見えている全文をそのまま取得 */
+    return (el.textContent || "").trim();
+
+  };
+
+  const enabled = getCorrectedText().length > 0;
+
+  const bindCopy = (btnId) => {
+
+    const btn = $(btnId);
+
+    if (!btn) return;
+
+    btn.disabled = !enabled;
+
+    btn.onclick = () => {
+
+      const text = getCorrectedText();
+
+      copyToClipboard(
+        text,
+        "修正版をコピーしました"
+      );
+
+    };
+
+  };
+
+  bindCopy("btnCopyBulkCorrected");
+  bindCopy("btnCopyBulkCorrectedTop");
+
+}
+
 function renderBulkResult(data) {
 
   const issues =
@@ -773,8 +899,14 @@ function renderBulkResult(data) {
       ? data.issues
       : [];
 
-  const corrected =
-    data.corrected || "";
+  /* corrected が空の場合のフォールバック：
+     元の入力文を修正版欄に表示してコピーできるようにする */
+  let corrected =
+    (data.corrected || "").trim();
+
+  if (!corrected) {
+    corrected = ($("bulkInput")?.value || "").trim();
+  }
 
   const score =
     typeof data.score === "number"
@@ -851,8 +983,8 @@ function renderBulkResult(data) {
     issueCountEl.textContent = `${issues.length}件`;
   }
 
-  $("bulkCorrected").textContent =
-    corrected;
+  /* 修正版を画面に表示（このテキストがコピー対象になる） */
+  $("bulkCorrected").textContent = corrected;
 
   const aiReasonEl = $("bulkAiReason");
 
@@ -860,41 +992,8 @@ function renderBulkResult(data) {
     aiReasonEl.textContent = aiReason;
   }
 
-  const copyBtn =
-    $("btnCopyBulkCorrected");
-
-  if (copyBtn) {
-
-    copyBtn.disabled = !corrected;
-
-    copyBtn.onclick = () => {
-
-      copyToClipboard(
-        corrected,
-        "修正版をコピーしました"
-      );
-
-    };
-
-  }
-
-  const copyBtnTop =
-    $("btnCopyBulkCorrectedTop");
-
-  if (copyBtnTop) {
-
-    copyBtnTop.disabled = !corrected;
-
-    copyBtnTop.onclick = () => {
-
-      copyToClipboard(
-        corrected,
-        "修正版をコピーしました"
-      );
-
-    };
-
-  }
+  /* 表示が終わってからコピーボタンを設定（表示テキスト基準で有効化） */
+  setupBulkCopyButtons();
 
 }
 
