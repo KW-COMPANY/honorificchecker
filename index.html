@@ -332,6 +332,10 @@ MAIN
 
 </div>
 
+<!-- 個人情報アラート（短文） -->
+
+<div id="shortSensitive" class="sensitive-alert hidden"></div>
+
 <!-- ボタン -->
 
 <div class="mt-4 flex flex-wrap gap-2">
@@ -443,6 +447,10 @@ AIエージェントが分析中...
 <span id="bulkCount">0</span>/10000文字
 
 </div>
+
+<!-- 個人情報アラート（長文） -->
+
+<div id="bulkSensitive" class="sensitive-alert hidden"></div>
 
 <!-- ボタン -->
 
@@ -621,10 +629,11 @@ Q. AIエージェントとは？
 <p class="mt-1">
 
 本ツールでは、
-敬語チェックだけではなく、
+敬語チェックだけត​ではなく、
 
 <ul class="list-disc pl-6 mt-2 space-y-1">
 
+<li>個人情報スキャン</li>
 <li>ルール判定</li>
 <li>文法解析</li>
 <li>業界別分析</li>
