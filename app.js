@@ -143,7 +143,7 @@ async function postJson(path, body) {
 }
 
 /* =========================
-個人情報・企業情報 検知（クライアント側・無料・通信不要）
+個人情報・企業情報 検知
 ========================= */
 
 function clientDetectSensitive(text) {
@@ -251,8 +251,7 @@ function toast(message, type = "success") {
 }
 
 /* =========================
-クリップボード（フォールバック付き・修正の核心）
-navigator.clipboard が使えない環境でも動くよう旧方式を併用
+クリップボード
 ========================= */
 
 function legacyCopy(text) {
@@ -263,7 +262,6 @@ function legacyCopy(text) {
 
     textarea.value = text;
 
-    /* 画面外に配置してスクロールを動かさない */
     textarea.style.position = "fixed";
     textarea.style.top = "-9999px";
     textarea.style.left = "-9999px";
@@ -301,7 +299,6 @@ async function copyToClipboard(text, message) {
 
   }
 
-  /* まず標準APIを試す */
   if (
     navigator.clipboard &&
     typeof navigator.clipboard.writeText === "function" &&
@@ -318,13 +315,10 @@ async function copyToClipboard(text, message) {
 
     } catch {
 
-      /* 失敗したら旧方式へフォールバック */
-
     }
 
   }
 
-  /* 旧方式でのコピー */
   if (legacyCopy(value)) {
 
     toast(message);
@@ -846,20 +840,18 @@ safeAddEvent("btnCheckBulk", "click", async () => {
 });
 
 /* =========================
-修正版コピーボタンの一元設定（修正の核心）
+修正版コピーボタンの一元設定
 表示中の修正版テキストを直接コピー対象にする
 ========================= */
 
 function setupBulkCopyButtons() {
 
-  /* 画面に実際に表示されている修正版テキストを取得する関数 */
   const getCorrectedText = () => {
 
     const el = $("bulkCorrected");
 
     if (!el) return "";
 
-    /* textContent で見えている全文をそのまま取得 */
     return (el.textContent || "").trim();
 
   };
