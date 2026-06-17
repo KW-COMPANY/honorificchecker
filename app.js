@@ -1,4 +1,3 @@
-// File: app.js
 const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
 
 const $ = (id) => document.getElementById(id);
