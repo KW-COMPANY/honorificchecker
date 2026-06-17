@@ -1,3 +1,4 @@
+// File: app.js
 const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
 
 const $ = (id) => document.getElementById(id);
@@ -143,7 +144,7 @@ async function postJson(path, body) {
 }
 
 /* =========================
-個人情報・企業情報 検知
+個人情報・企業情報 検知（クライアント側・無料・通信不要）
 ========================= */
 
 function clientDetectSensitive(text) {
@@ -202,8 +203,6 @@ function renderSensitiveAlert(targetId, labels) {
 
 }
 
-/* 入力中のリアルタイム検知 */
-
 function attachSensitiveWatcher(inputId, alertId) {
 
   const input = $(inputId);
@@ -251,7 +250,7 @@ function toast(message, type = "success") {
 }
 
 /* =========================
-クリップボード
+クリップボード（フォールバック付き）
 ========================= */
 
 function legacyCopy(text) {
@@ -314,6 +313,8 @@ async function copyToClipboard(text, message) {
       return;
 
     } catch {
+
+      /* フォールバックへ */
 
     }
 
@@ -427,6 +428,7 @@ safeAddEvent("btnClearShort", "click", () => {
 
   if (btn) {
     btn.disabled = true;
+    btn.onclick = null;
   }
 
 });
@@ -645,13 +647,16 @@ function renderShortResult(data) {
       </div>
     `;
 
+    /* エラー時はコピー無効化 */
+    const copyBtnErr = $("btnCopyShortSuggestion");
+    if (copyBtnErr) {
+      copyBtnErr.disabled = true;
+      copyBtnErr.onclick = null;
+    }
+
     return;
 
   }
-
-  /* 修正済み：
-     data.ai?.suggestions → data.suggestions
-  */
 
   const suggestions =
     Array.isArray(data.suggestions)
@@ -672,21 +677,26 @@ function renderShortResult(data) {
       ? data.score
       : 100;
 
-  const firstSuggestion =
-    suggestions[0] || "";
+  /* === 修正版「全文」を取得（コピー対象） === */
+  /* サーバーの corrected を最優先。無ければ元の入力文 */
+  const correctedFull =
+    (typeof data.corrected === "string" && data.corrected.trim())
+      ? data.corrected.trim()
+      : ($("shortInput")?.value || "").trim();
 
+  /* コピーボタンは「修正版全文」をコピーする */
   const copyBtn =
     $("btnCopyShortSuggestion");
 
   if (copyBtn) {
 
-    copyBtn.disabled = !firstSuggestion;
+    copyBtn.disabled = !correctedFull;
 
     copyBtn.onclick = () => {
 
       copyToClipboard(
-        firstSuggestion,
-        "修正文をコピーしました"
+        correctedFull,
+        "修正版（全文）をコピーしました"
       );
 
     };
@@ -753,6 +763,16 @@ function renderShortResult(data) {
         :
         ""
       }
+
+      <div class="mt-5 font-semibold">
+        修正版（全文）
+      </div>
+
+      <pre id="shortCorrected" class="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-100" style="background:rgba(2,6,23,.35);border:1px solid var(--border);border-radius:14px;padding:14px;">${escapeHtml(correctedFull)}</pre>
+
+      <div class="mt-2 text-xs text-slate-300/70">
+        上部の「修正文コピー」ボタンで、この修正版全文をそのままコピーできます。
+      </div>
 
       <div class="mt-5 font-semibold">
         AI修正文提案
@@ -839,11 +859,6 @@ safeAddEvent("btnCheckBulk", "click", async () => {
 
 });
 
-/* =========================
-修正版コピーボタンの一元設定
-表示中の修正版テキストを直接コピー対象にする
-========================= */
-
 function setupBulkCopyButtons() {
 
   const getCorrectedText = () => {
@@ -891,8 +906,6 @@ function renderBulkResult(data) {
       ? data.issues
       : [];
 
-  /* corrected が空の場合のフォールバック：
-     元の入力文を修正版欄に表示してコピーできるようにする */
   let corrected =
     (data.corrected || "").trim();
 
@@ -975,7 +988,6 @@ function renderBulkResult(data) {
     issueCountEl.textContent = `${issues.length}件`;
   }
 
-  /* 修正版を画面に表示（このテキストがコピー対象になる） */
   $("bulkCorrected").textContent = corrected;
 
   const aiReasonEl = $("bulkAiReason");
@@ -984,7 +996,6 @@ function renderBulkResult(data) {
     aiReasonEl.textContent = aiReason;
   }
 
-  /* 表示が終わってからコピーボタンを設定（表示テキスト基準で有効化） */
   setupBulkCopyButtons();
 
 }
