@@ -891,6 +891,90 @@ footer a{
 }
 
 /* =========================
+FEEDBACK（Closed Loop 追加）
+========================= */
+
+.feedback-box{
+  margin-top:20px;
+  border-radius:14px;
+  border:1px solid rgba(52,211,153,.35);
+  background:rgba(52,211,153,.07);
+  padding:16px;
+  animation:fadeIn .3s ease;
+}
+
+.feedback-title{
+  font-weight:800;
+  font-size:.98rem;
+  color:#6ee7b7;
+}
+
+.feedback-desc{
+  margin-top:6px;
+  font-size:.86rem;
+  line-height:1.7;
+  color:rgba(255,255,255,.82);
+}
+
+.feedback-actions{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.btn-fb-good{
+  background:rgba(52,211,153,.14);
+  border-color:rgba(52,211,153,.4);
+  color:#6ee7b7;
+  font-weight:700;
+}
+
+.btn-fb-good:hover{
+  background:rgba(52,211,153,.22);
+}
+
+.btn-fb-bad{
+  background:rgba(251,113,133,.12);
+  border-color:rgba(251,113,133,.4);
+  color:#fda4af;
+  font-weight:700;
+}
+
+.btn-fb-bad:hover{
+  background:rgba(251,113,133,.2);
+}
+
+.fb-selected{
+  outline:2px solid rgba(167,139,250,.6);
+  outline-offset:1px;
+}
+
+.feedback-teach{
+  margin-top:14px;
+  border-top:1px dashed rgba(255,255,255,.14);
+  padding-top:12px;
+}
+
+.feedback-label{
+  display:block;
+  font-size:.82rem;
+  color:rgba(255,255,255,.78);
+}
+
+.btn-fb-teach{
+  margin-top:8px;
+  background:rgba(167,139,250,.14);
+  border-color:rgba(167,139,250,.4);
+  color:#c4b5fd;
+  font-weight:700;
+}
+
+.btn-fb-teach:hover{
+  background:rgba(167,139,250,.22);
+}
+
+/* =========================
 MOBILE
 ========================= */
 
@@ -923,6 +1007,10 @@ MOBILE
 
   .textarea{
     font-size:16px;
+  }
+
+  .feedback-actions .btn{
+    width:100%;
   }
 
 }
