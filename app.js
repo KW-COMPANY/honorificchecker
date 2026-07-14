@@ -1,3 +1,4 @@
+// File: app.js
 const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
 
 const $ = (id) => document.getElementById(id);
@@ -24,6 +25,15 @@ const examples = {
 来週の打ち合わせ日程について、ご都合の良い候補日を3つほど頂けますでしょうか。
 よろしくお願い申し上げます。`
 
+};
+
+/* =========================
+Closed Loop 追加：直近チェックの記録（フィードバック紐付け用）
+========================= */
+
+const lastCheck = {
+  short: { before: "", after: "" },
+  bulk: { before: "", after: "" }
 };
 
 /* =========================
@@ -332,6 +342,20 @@ async function copyToClipboard(text, message) {
 }
 
 /* =========================
+Closed Loop 追加：フィードバック送信
+========================= */
+
+async function sendFeedback(payload) {
+  try {
+    await postJson("/api/feedback", payload);
+    return true;
+  } catch {
+    /* 学習は補助機能のため、失敗してもユーザー体験を阻害しない */
+    return false;
+  }
+}
+
+/* =========================
 タブ
 ========================= */
 
@@ -430,6 +454,11 @@ safeAddEvent("btnClearShort", "click", () => {
     btn.onclick = null;
   }
 
+  /* Closed Loop 追加：フィードバック欄を隠す */
+  safeHide("shortFeedback");
+  const uf = $("shortUserFix");
+  if (uf) uf.value = "";
+
 });
 
 safeAddEvent("btnClearBulk", "click", () => {
@@ -461,6 +490,9 @@ safeAddEvent("btnClearBulk", "click", () => {
   if (btnTop) {
     btnTop.disabled = true;
   }
+
+  /* Closed Loop 追加：フィードバック欄を隠す */
+  safeHide("bulkFeedback");
 
 });
 
@@ -653,6 +685,9 @@ function renderShortResult(data) {
       copyBtnErr.onclick = null;
     }
 
+    /* Closed Loop 追加：エラー時はフィードバック欄を隠す */
+    safeHide("shortFeedback");
+
     return;
 
   }
@@ -682,6 +717,10 @@ function renderShortResult(data) {
     (typeof data.corrected === "string" && data.corrected.trim())
       ? data.corrected.trim()
       : ($("shortInput")?.value || "").trim();
+
+  /* Closed Loop 追加：フィードバック紐付け用に記録 */
+  lastCheck.short.before = ($("shortInput")?.value || "").trim();
+  lastCheck.short.after = correctedFull;
 
   /* コピーボタンは「修正版全文」をコピーする */
   const copyBtn =
@@ -801,6 +840,9 @@ function renderShortResult(data) {
 
     </div>
   `;
+
+  /* Closed Loop 追加：フィードバック欄を表示・状態リセット */
+  showFeedback("short");
 
 }
 
@@ -997,6 +1039,11 @@ function renderBulkResult(data) {
 
   setupBulkCopyButtons();
 
+  /* Closed Loop 追加：フィードバック紐付け用に記録し、欄を表示 */
+  lastCheck.bulk.before = ($("bulkInput")?.value || "").trim();
+  lastCheck.bulk.after = corrected;
+  showFeedback("bulk");
+
 }
 
 /* =========================
@@ -1031,6 +1078,111 @@ document.body.addEventListener("click", (e) => {
 });
 
 /* =========================
+Closed Loop 追加：フィードバックUI制御
+========================= */
+
+function showFeedback(kind) {
+  const boxId = kind === "short" ? "shortFeedback" : "bulkFeedback";
+  safeShow(boxId);
+
+  /* ボタンの状態を初期化（連続チェック時に再度評価できるように） */
+  const ids = kind === "short"
+    ? ["btnShortGood", "btnShortBad", "btnShortTeach"]
+    : ["btnBulkGood", "btnBulkBad"];
+
+  for (const id of ids) {
+    const b = $(id);
+    if (b) {
+      b.disabled = false;
+      b.classList.remove("fb-selected");
+    }
+  }
+
+  const uf = $("shortUserFix");
+  if (kind === "short" && uf) uf.value = "";
+}
+
+function bindFeedbackButtons() {
+
+  /* 短文：役に立った */
+  safeAddEvent("btnShortGood", "click", async () => {
+    const ok = await sendFeedback({
+      type: "short",
+      rating: "good",
+      before: lastCheck.short.before,
+      after: lastCheck.short.after
+    });
+    markFeedbackDone("btnShortGood", "btnShortBad", ok);
+  });
+
+  /* 短文：いまいち */
+  safeAddEvent("btnShortBad", "click", async () => {
+    const ok = await sendFeedback({
+      type: "short",
+      rating: "bad",
+      before: lastCheck.short.before,
+      after: lastCheck.short.after
+    });
+    markFeedbackDone("btnShortBad", "btnShortGood", ok);
+  });
+
+  /* 短文：正しい修正をAIに教える */
+  safeAddEvent("btnShortTeach", "click", async () => {
+    const userFix = ($("shortUserFix")?.value || "").trim();
+    if (!userFix) {
+      toast("修正文を入力してください", "error");
+      return;
+    }
+    const btn = $("btnShortTeach");
+    if (btn) btn.disabled = true;
+    const ok = await sendFeedback({
+      type: "short",
+      rating: "good",
+      before: lastCheck.short.before,
+      after: lastCheck.short.after,
+      userFix
+    });
+    toast(ok ? "AIに反映しました。ありがとうございます" : "送信に失敗しました", ok ? "success" : "error");
+    if (!ok && btn) btn.disabled = false;
+  });
+
+  /* 長文：役に立った */
+  safeAddEvent("btnBulkGood", "click", async () => {
+    const ok = await sendFeedback({
+      type: "bulk",
+      rating: "good",
+      before: lastCheck.bulk.before,
+      after: lastCheck.bulk.after
+    });
+    markFeedbackDone("btnBulkGood", "btnBulkBad", ok);
+  });
+
+  /* 長文：いまいち */
+  safeAddEvent("btnBulkBad", "click", async () => {
+    const ok = await sendFeedback({
+      type: "bulk",
+      rating: "bad",
+      before: lastCheck.bulk.before,
+      after: lastCheck.bulk.after
+    });
+    markFeedbackDone("btnBulkBad", "btnBulkGood", ok);
+  });
+
+}
+
+function markFeedbackDone(selectedId, otherId, ok) {
+  const sel = $(selectedId);
+  const oth = $(otherId);
+  if (ok) {
+    if (sel) { sel.disabled = true; sel.classList.add("fb-selected"); }
+    if (oth) oth.disabled = true;
+    toast("評価を記録しました。ありがとうございます");
+  } else {
+    toast("送信に失敗しました", "error");
+  }
+}
+
+/* =========================
 初期化
 ========================= */
 
@@ -1043,5 +1195,8 @@ document.body.addEventListener("click", (e) => {
 
   attachSensitiveWatcher("shortInput", "shortSensitive");
   attachSensitiveWatcher("bulkInput", "bulkSensitive");
+
+  /* Closed Loop 追加 */
+  bindFeedbackButtons();
 
 })();
