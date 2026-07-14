@@ -1,3 +1,4 @@
+<!-- Output: html -->
 <!doctype html>
 <html lang="ja">
 <head>
@@ -29,7 +30,7 @@ gtag('config', 'G-RXH5HHYN95');
 
 <meta
   name="description"
-  content="ビジネス敬語の誤用（敬語・謙譲語・二重敬語・誤字脱字）をAIエージェントが即チェック。メール全文にも対応。"
+  content="ビジネス敬語の誤用（敬語・謙譲語・二重敬語・誤字脱字）をAIエージェントが即チェック。メール全文にも対応。使うほど賢くなる学習型AI。"
 />
 
 <meta
@@ -196,17 +197,17 @@ AIの結果は参考情報としてご利用ください。
 </div>
 <div class="mini-title">ナレッジ参照</div>
 <div class="mini-desc">
-業界知識を自動参照
+蓄積事例を自動参照
 </div>
 </div>
 
 <div class="mini-card">
 <div class="mini-icon">
-<i class="fa-solid fa-wand-magic-sparkles"></i>
+<i class="fa-solid fa-arrows-rotate"></i>
 </div>
-<div class="mini-title">修正文生成</div>
+<div class="mini-title">学習ループ</div>
 <div class="mini-desc">
-複数パターンを提案
+使うほど精度が向上
 </div>
 </div>
 
@@ -381,6 +382,55 @@ AIエージェントが分析中...
 <!-- 結果 -->
 
 <div id="shortResult" class="mt-4 hidden"></div>
+
+<!-- =========================
+フィードバック（短文）Closed Loop 追加
+========================= -->
+
+<div id="shortFeedback" class="feedback-box hidden">
+
+<div class="feedback-title">
+<i class="fa-solid fa-arrows-rotate mr-1"></i>
+このAIを賢く育てましょう
+</div>
+
+<div class="feedback-desc">
+今回の修正結果は役に立ちましたか？あなたの評価が次回以降のAI精度を高めます。
+</div>
+
+<div class="feedback-actions">
+
+<button id="btnShortGood" class="btn btn-fb-good">
+<i class="fa-solid fa-thumbs-up mr-1"></i>役に立った
+</button>
+
+<button id="btnShortBad" class="btn btn-fb-bad">
+<i class="fa-solid fa-thumbs-down mr-1"></i>いまいち
+</button>
+
+</div>
+
+<div class="feedback-teach">
+
+<label class="feedback-label">
+より良い修正文があれば教えてください（任意・学習に活用されます）
+</label>
+
+<textarea
+  id="shortUserFix"
+  class="textarea"
+  rows="2"
+  maxlength="1200"
+  placeholder="例：伺います"
+></textarea>
+
+<button id="btnShortTeach" class="btn btn-fb-teach">
+<i class="fa-solid fa-graduation-cap mr-1"></i>この修正をAIに教える
+</button>
+
+</div>
+
+</div>
 
 </div>
 
@@ -590,6 +640,35 @@ AI解説
 
 </div>
 
+<!-- =========================
+フィードバック（長文）Closed Loop 追加
+========================= -->
+
+<div id="bulkFeedback" class="feedback-box hidden">
+
+<div class="feedback-title">
+<i class="fa-solid fa-arrows-rotate mr-1"></i>
+このAIを賢く育てましょう
+</div>
+
+<div class="feedback-desc">
+今回の修正結果は役に立ちましたか？あなたの評価が次回以降のAI精度を高めます。
+</div>
+
+<div class="feedback-actions">
+
+<button id="btnBulkGood" class="btn btn-fb-good">
+<i class="fa-solid fa-thumbs-up mr-1"></i>役に立った
+</button>
+
+<button id="btnBulkBad" class="btn btn-fb-bad">
+<i class="fa-solid fa-thumbs-down mr-1"></i>いまいち
+</button>
+
+</div>
+
+</div>
+
 </div>
 
 </section>
@@ -630,6 +709,22 @@ Q. メール全文も分析できますか？
 
 はい。
 長文メール全体の敬語・誤字・文法をまとめてチェックできます。
+
+</p>
+
+</div>
+
+<div>
+
+<h3 class="font-bold text-white">
+Q. 使うほど精度は上がりますか？
+</h3>
+
+<p class="mt-1">
+
+はい。
+チェック後の「役に立った」評価や、より良い修正文のご提案が蓄積され、
+次回以降のAIの判断に反映される学習型（Closed Loop）です。
 
 </p>
 
