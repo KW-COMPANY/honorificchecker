@@ -1,4 +1,3 @@
-// File: app.js
 const API_ENDPOINT = "https://honorificchecker.gmo-k-watanabe.workers.dev";
 
 const $ = (id) => document.getElementById(id);
@@ -28,7 +27,7 @@ const examples = {
 };
 
 /* =========================
-Closed Loop 追加：直近チェックの記録（フィードバック紐付け用）
+直近チェックの記録（フィードバック紐付け用）
 ========================= */
 
 const lastCheck = {
@@ -342,7 +341,7 @@ async function copyToClipboard(text, message) {
 }
 
 /* =========================
-Closed Loop 追加：フィードバック送信
+フィードバック送信
 ========================= */
 
 async function sendFeedback(payload) {
@@ -685,7 +684,7 @@ function renderShortResult(data) {
       copyBtnErr.onclick = null;
     }
 
-    /* Closed Loop 追加：エラー時はフィードバック欄を隠す */
+    /* エラー時はフィードバック欄を隠す */
     safeHide("shortFeedback");
 
     return;
@@ -718,7 +717,7 @@ function renderShortResult(data) {
       ? data.corrected.trim()
       : ($("shortInput")?.value || "").trim();
 
-  /* Closed Loop 追加：フィードバック紐付け用に記録 */
+  /* フィードバック紐付け用に記録 */
   lastCheck.short.before = ($("shortInput")?.value || "").trim();
   lastCheck.short.after = correctedFull;
 
@@ -1078,7 +1077,7 @@ document.body.addEventListener("click", (e) => {
 });
 
 /* =========================
-Closed Loop 追加：フィードバックUI制御
+フィードバックUI制御
 ========================= */
 
 function showFeedback(kind) {
@@ -1196,7 +1195,6 @@ function markFeedbackDone(selectedId, otherId, ok) {
   attachSensitiveWatcher("shortInput", "shortSensitive");
   attachSensitiveWatcher("bulkInput", "bulkSensitive");
 
-  /* Closed Loop 追加 */
   bindFeedbackButtons();
 
 })();
